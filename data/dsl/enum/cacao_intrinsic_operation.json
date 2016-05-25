@@ -1,0 +1,208 @@
+{
+    "File": "intrinsicoperation.go",
+    "Name": "IntrinsicOperation",
+    "Prefix": "INTRINSIC_OPERATION",
+    "Fields": [
+	{"Name": "InfixOperator", "Type": "InfixOperator"},
+	{"Name": "InfixLeft", "Type": "IntrinsicType"},
+	{"Name": "InfixRight", "Type": "IntrinsicType"},
+	{"Name": "InfixResult", "Type": "IntrinsicType"}
+    ],
+    "Indexes": [
+	{
+	    "Name": "InfixToIntrinsic",
+	    "Path": ["InfixOperator", "InfixLeft", "InfixRight"]
+	}
+    ],
+    "Enums": [
+	{
+	    "Name": "I32_ADD",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_ADD",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_I32"
+	    }
+	},
+	{
+	    "Name": "I32_SUB",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_SUB",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_I32"
+	    }
+	},
+	{
+	    "Name": "I32_MUL",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_MUL",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_I32"
+	    }
+	},
+	{
+	    "Name": "I32_DIV",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_DIV",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_I32"
+	    }
+	},
+	{
+	    "Name": "I32_MOD",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_MOD",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_I32"
+	    }
+	},
+	{
+	    "Name": "I32_CMP_EQ",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_EQ",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "I32_CMP_NE",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_NE",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "I32_CMP_LT",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_LT",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "I32_CMP_LE",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_LE",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "I32_CMP_GT",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_GT",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "I32_CMP_GE",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_GE",
+		"InfixLeft": "INTRINSIC_TYPE_I32",
+		"InfixRight": "INTRINSIC_TYPE_I32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "F32_ADD",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_ADD",
+		"InfixLeft": "INTRINSIC_TYPE_F32",
+		"InfixRight": "INTRINSIC_TYPE_F32",
+		"InfixResult": "INTRINSIC_TYPE_F32"
+	    }
+	},
+	{
+	    "Name": "F32_SUB",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_SUB",
+		"InfixLeft": "INTRINSIC_TYPE_F32",
+		"InfixRight": "INTRINSIC_TYPE_F32",
+		"InfixResult": "INTRINSIC_TYPE_F32"
+	    }
+	},
+	{
+	    "Name": "F32_MUL",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_MUL",
+		"InfixLeft": "INTRINSIC_TYPE_F32",
+		"InfixRight": "INTRINSIC_TYPE_F32",
+		"InfixResult": "INTRINSIC_TYPE_F32"
+	    }
+	},
+	{
+	    "Name": "F32_DIV",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_DIV",
+		"InfixLeft": "INTRINSIC_TYPE_F32",
+		"InfixRight": "INTRINSIC_TYPE_F32",
+		"InfixResult": "INTRINSIC_TYPE_F32"
+	    }
+	},
+	{
+	    "Name": "F32_CMP_EQ",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_EQ",
+		"InfixLeft": "INTRINSIC_TYPE_F32",
+		"InfixRight": "INTRINSIC_TYPE_F32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "F32_CMP_NE",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_NE",
+		"InfixLeft": "INTRINSIC_TYPE_F32",
+		"InfixRight": "INTRINSIC_TYPE_F32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "F32_CMP_LT",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_LT",
+		"InfixLeft": "INTRINSIC_TYPE_F32",
+		"InfixRight": "INTRINSIC_TYPE_F32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "F32_CMP_LE",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_LE",
+		"InfixLeft": "INTRINSIC_TYPE_F32",
+		"InfixRight": "INTRINSIC_TYPE_F32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "F32_CMP_GT",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_GT",
+		"InfixLeft": "INTRINSIC_TYPE_F32",
+		"InfixRight": "INTRINSIC_TYPE_F32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	},
+	{
+	    "Name": "F32_CMP_GE",
+	    "Fields": {
+		"InfixOperator": "INFIX_OPERATOR_CMP_GE",
+		"InfixLeft": "INTRINSIC_TYPE_F32",
+		"InfixRight": "INTRINSIC_TYPE_F32",
+		"InfixResult": "INTRINSIC_TYPE_BOOL"
+	    }
+	}
+    ]
+}

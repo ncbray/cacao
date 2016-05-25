@@ -1,0 +1,15 @@
+func mul(a i32, b i32) i32 {
+  return a * b
+}
+
+func test(a i32, b i32) i32 {
+  return mul(a+b, a-b)
+}
+
+func select(cond i32, t i32, f i32) i32 {
+  if cond >= 0 {
+    return t
+  } else {
+    return f
+  }
+}

@@ -1,0 +1,84 @@
+{
+    "File": "infixoperator.go",
+    "Name": "InfixOperator",
+    "Prefix": "INFIX_OPERATOR",
+    "GenerateParser": "Text",
+    "Fields": [
+	{"Name": "Text", "Type": "string"},
+	{"Name": "Precedence", "Type": "int"}
+    ],
+    "Enums": [
+	{
+	    "Name": "MUL",
+	    "Fields": {"Text": "*", "Precedence": 10}
+	},
+	{
+	    "Name": "DIV",
+	    "Fields": {"Text": "/", "Precedence": 10}
+	},
+	{
+	    "Name": "MOD",
+	    "Fields": {"Text": "%", "Precedence": 10}
+	},
+	{
+	    "Name": "ADD",
+	    "Fields": {"Text": "+", "Precedence": 9}
+	},
+	{
+	    "Name": "SUB",
+	    "Fields": {"Text": "-", "Precedence": 9}
+	},
+	{
+	    "Name": "BIT_LSH",
+	    "Fields": {"Text": "<<", "Precedence": 8}
+	},
+	{
+	    "Name": "BIT_RSH",
+	    "Fields": {"Text": ">>", "Precedence": 8}
+	},
+	{
+	    "Name": "BIT_AND",
+	    "Fields": {"Text": "&", "Precedence": 7}
+	},
+	{
+	    "Name": "BIT_XOR",
+	    "Fields": {"Text": "^", "Precedence": 6}
+	},
+	{
+	    "Name": "BIT_IOR",
+	    "Fields": {"Text": "|", "Precedence": 5}
+	},
+	{
+	    "Name": "CMP_EQ",
+	    "Fields": {"Text": "==", "Precedence": 4}
+	},
+	{
+	    "Name": "CMP_NE",
+	    "Fields": {"Text": "!=", "Precedence": 4}
+	},
+	{
+	    "Name": "CMP_LT",
+	    "Fields": {"Text": "<", "Precedence": 4}
+	},
+	{
+	    "Name": "CMP_LE",
+	    "Fields": {"Text": "<=", "Precedence": 4}
+	},
+	{
+	    "Name": "CMP_GT",
+	    "Fields": {"Text": ">", "Precedence": 4}
+	},
+	{
+	    "Name": "CMP_GE",
+	    "Fields": {"Text": ">=", "Precedence": 4}
+	},
+	{
+	    "Name": "AND",
+	    "Fields": {"Text": "&&", "Precedence": 3}
+	},
+	{
+	    "Name": "OR",
+	    "Fields": {"Text": "||", "Precedence": 2}
+	}
+    ]
+}

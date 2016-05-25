@@ -1,0 +1,27 @@
+{
+    "File": "prefixoperator.go",
+    "Name": "PrefixOperator",
+    "Prefix": "PREFIX_OPERATOR",
+    "GenerateParser": "Text",
+    "Fields": [
+	{"Name": "Text", "Type": "string"}
+    ],
+    "Enums": [
+	{
+	    "Name": "NOT",
+	    "Fields": {"Text": "!"}
+	},
+	{
+	    "Name": "BIT_NOT",
+	    "Fields": {"Text": "~"}
+	},
+	{
+	    "Name": "POS",
+	    "Fields": {"Text": "+"}
+	},
+	{
+	    "Name": "NEG",
+	    "Fields": {"Text": "-"}
+	}
+    ]
+}
