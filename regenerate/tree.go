@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/ncbray/compilerutil/writer"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 )
 
@@ -147,10 +146,10 @@ func generateGroupDump(group *GroupDecl, out *writer.TabbedWriter) {
 
 }
 
-func generateDump(filename string, decl *TreeDecl, output_dir string) {
+func generateDump(filename string, decl *TreeDecl, output_dir string, safe_file_output *writer.SafeFileOutput) {
 	outfile := filepath.Join(output_dir, decl.Dump)
 	fmt.Println("    ", filename, "=>", outfile)
-	f, err := os.Create(outfile)
+	f, err := safe_file_output.OutputFile(outfile, 0640)
 	if err != nil {
 		panic(err)
 	}
@@ -179,10 +178,10 @@ func generateDump(filename string, decl *TreeDecl, output_dir string) {
 	formatGoFile(f.Name())
 }
 
-func generateTree(filename string, decl *TreeDecl, output_dir string) {
+func generateTree(filename string, decl *TreeDecl, output_dir string, safe_file_output *writer.SafeFileOutput) {
 	outfile := filepath.Join(output_dir, decl.File)
 	fmt.Println("    ", filename, "=>", outfile)
-	f, err := os.Create(outfile)
+	f, err := safe_file_output.OutputFile(outfile, 0640)
 	if err != nil {
 		panic(err)
 	}
@@ -204,7 +203,7 @@ func generateTree(filename string, decl *TreeDecl, output_dir string) {
 	formatGoFile(f.Name())
 }
 
-func ProcessTreeFile(filename string, output_dir string) {
+func ProcessTreeFile(filename string, output_dir string, safe_file_output *writer.SafeFileOutput) {
 	fmt.Println("Processing", filename)
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -215,8 +214,8 @@ func ProcessTreeFile(filename string, output_dir string) {
 	if err != nil {
 		panic(err)
 	}
-	generateTree(filename, decl, output_dir)
+	generateTree(filename, decl, output_dir, safe_file_output)
 	if decl.Dump != "" {
-		generateDump(filename, decl, output_dir)
+		generateDump(filename, decl, output_dir, safe_file_output)
 	}
 }

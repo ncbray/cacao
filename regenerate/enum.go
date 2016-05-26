@@ -6,7 +6,6 @@ import (
 	"github.com/ncbray/compilerutil/writer"
 	"go/format"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -228,7 +227,7 @@ func WriteIndex(decl *EnumTypeDecl, idx *EnumIndexDecl, pos int, enums []*EnumDe
 	}
 }
 
-func ProcessEnumFile(filename string, output_dir string) {
+func ProcessEnumFile(filename string, output_dir string, safe_file_output *writer.SafeFileOutput) {
 	fmt.Println("Processing", filename)
 
 	data, err := ioutil.ReadFile(filename)
@@ -244,7 +243,7 @@ func ProcessEnumFile(filename string, output_dir string) {
 	outfile := filepath.Join(output_dir, decl.File)
 	fmt.Println("    ", filename, "=>", outfile)
 
-	f, err := os.Create(outfile)
+	f, err := safe_file_output.OutputFile(outfile, 0640)
 	if err != nil {
 		panic(err)
 	}

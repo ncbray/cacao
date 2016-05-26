@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/ncbray/cacao/regenerate"
+	"github.com/ncbray/compilerutil/writer"
 	"os"
 	"path/filepath"
 	"strings"
@@ -37,11 +38,18 @@ func main() {
 
 	// TODO do not update any sources unless generation is complete.
 
+	safe_file_output, err := writer.MakeSafeFileOutput()
+	if err != nil {
+		panic(err)
+	}
+	defer safe_file_output.Cleanup()
+
 	language_dir := filepath.Join(gopath, "src/github.com/ncbray/cacao/language")
 	for _, filename := range enums {
-		regenerate.ProcessEnumFile(filename, language_dir)
+		regenerate.ProcessEnumFile(filename, language_dir, safe_file_output)
 	}
 	for _, filename := range trees {
-		regenerate.ProcessTreeFile(filename, language_dir)
+		regenerate.ProcessTreeFile(filename, language_dir, safe_file_output)
 	}
+	safe_file_output.Commit()
 }
