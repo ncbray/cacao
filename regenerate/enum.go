@@ -4,12 +4,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ncbray/compilerutil/writer"
+	"go/format"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 )
+
+func formatGoFile(path string) error {
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	data, err = format.Source(data)
+	if err != nil {
+		return err
+	}
+	// TODO plumb through perm.
+	return ioutil.WriteFile(path, data, 0640)
+}
 
 type parseTree struct {
 	Value    string
@@ -234,6 +248,7 @@ func ProcessEnumFile(filename string, output_dir string) {
 	if err != nil {
 		panic(err)
 	}
+	defer f.Close()
 
 	out := writer.MakeTabbedWriter("\t", f)
 
@@ -328,4 +343,7 @@ func ProcessEnumFile(filename string, output_dir string) {
 		out.WriteLine("}")
 		out.EndOfLine()
 	}
+
+	f.Close()
+	formatGoFile(f.Name())
 }

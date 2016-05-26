@@ -154,6 +154,8 @@ func generateDump(filename string, decl *TreeDecl, output_dir string) {
 	if err != nil {
 		panic(err)
 	}
+	defer f.Close()
+
 	out := writer.MakeTabbedWriter("\t", f)
 	packageName := extractPackageName(outfile)
 	rel_src, _ := filepath.Rel(filepath.Dir(outfile), filename)
@@ -173,6 +175,8 @@ func generateDump(filename string, decl *TreeDecl, output_dir string) {
 	for _, group := range decl.Groups {
 		generateGroupDump(group, out)
 	}
+	f.Close()
+	formatGoFile(f.Name())
 }
 
 func generateTree(filename string, decl *TreeDecl, output_dir string) {
@@ -182,6 +186,7 @@ func generateTree(filename string, decl *TreeDecl, output_dir string) {
 	if err != nil {
 		panic(err)
 	}
+	defer f.Close()
 	out := writer.MakeTabbedWriter("\t", f)
 	packageName := extractPackageName(outfile)
 	rel_src, _ := filepath.Rel(filepath.Dir(outfile), filename)
@@ -195,6 +200,8 @@ func generateTree(filename string, decl *TreeDecl, output_dir string) {
 	for _, group := range decl.Groups {
 		generateGroupDecl(group, out)
 	}
+	f.Close()
+	formatGoFile(f.Name())
 }
 
 func ProcessTreeFile(filename string, output_dir string) {
