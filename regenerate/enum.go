@@ -3,6 +3,7 @@ package regenerate
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ncbray/compilerutil/fs"
 	"github.com/ncbray/compilerutil/writer"
 	"go/format"
 	"io/ioutil"
@@ -11,8 +12,8 @@ import (
 	"strings"
 )
 
-func formatGoFile(path string) error {
-	data, err := ioutil.ReadFile(path)
+func formatGoFile(src fs.DataInput, dst fs.DataOutput) error {
+	data, err := src.GetBytes()
 	if err != nil {
 		return err
 	}
@@ -20,8 +21,7 @@ func formatGoFile(path string) error {
 	if err != nil {
 		return err
 	}
-	// TODO plumb through perm.
-	return ioutil.WriteFile(path, data, 0640)
+	return dst.SetBytes(data)
 }
 
 type parseTree struct {
@@ -227,33 +227,12 @@ func WriteIndex(decl *EnumTypeDecl, idx *EnumIndexDecl, pos int, enums []*EnumDe
 	}
 }
 
-func ProcessEnumFile(filename string, output_dir string, safe_file_output *writer.SafeFileOutput) {
-	fmt.Println("Processing", filename)
+type ProcessEnumContext struct {
+	Input  fs.DataInput
+	Output fs.DataOutput
+}
 
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-	decl := &EnumTypeDecl{}
-	err = json.Unmarshal(data, decl)
-	if err != nil {
-		panic(err)
-	}
-
-	outfile := filepath.Join(output_dir, decl.File)
-	fmt.Println("    ", filename, "=>", outfile)
-
-	f, err := safe_file_output.OutputFile(outfile, 0640)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	out := writer.MakeTabbedWriter("\t", f)
-
-	packageName := extractPackageName(outfile)
-
-	rel_src, _ := filepath.Rel(filepath.Dir(outfile), filename)
+func generateEnumGo(decl *EnumTypeDecl, packageName string, rel_src string, out *writer.TabbedWriter) {
 	writeHeader(packageName, rel_src, out)
 
 	imports := []string{}
@@ -342,7 +321,38 @@ func ProcessEnumFile(filename string, output_dir string, safe_file_output *write
 		out.WriteLine("}")
 		out.EndOfLine()
 	}
+}
 
-	f.Close()
-	formatGoFile(f.Name())
+func processEnumFile(filename string, output_dir string, fsys fs.FileSystem) {
+	// Parse the JSON
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	decl := &EnumTypeDecl{}
+	err = json.Unmarshal(data, decl)
+	if err != nil {
+		panic(err)
+	}
+
+	outfile := filepath.Join(output_dir, decl.File)
+	fmt.Println("    ", filename, "=>", outfile)
+
+	t := fsys.TempFile()
+	tw, err := t.GetWriter()
+	if err != nil {
+		panic(err)
+	}
+	out := writer.MakeTabbedWriter("\t", tw)
+	packageName := extractPackageName(outfile)
+	rel_src, _ := filepath.Rel(filepath.Dir(outfile), filename)
+	generateEnumGo(decl, packageName, rel_src, out)
+	tw.Close()
+
+	formatGoFile(t, fsys.OutputFile(outfile, 0640))
+}
+
+func ProcessEnumFile(filename string, output_dir string, fsys fs.FileSystem) {
+	fmt.Println("Processing", filename)
+	processEnumFile(filename, output_dir, fsys)
 }

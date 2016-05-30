@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/ncbray/cacao/regenerate"
-	"github.com/ncbray/compilerutil/writer"
+	"github.com/ncbray/compilerutil/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -36,20 +36,19 @@ func main() {
 	enums := jsonFilesInDir(filepath.Join(data_dir, "dsl/enum"))
 	trees := jsonFilesInDir(filepath.Join(data_dir, "dsl/tree"))
 
-	// TODO do not update any sources unless generation is complete.
-
-	safe_file_output, err := writer.MakeSafeFileOutput()
+	tdir, err := fs.MakeTempDir("compiler_outputs_")
 	if err != nil {
 		panic(err)
 	}
-	defer safe_file_output.Cleanup()
+	defer tdir.Cleanup()
 
+	fsys := fs.MakeBufferedFileSystem(tdir)
 	language_dir := filepath.Join(gopath, "src/github.com/ncbray/cacao/language")
 	for _, filename := range enums {
-		regenerate.ProcessEnumFile(filename, language_dir, safe_file_output)
+		regenerate.ProcessEnumFile(filename, language_dir, fsys)
 	}
 	for _, filename := range trees {
-		regenerate.ProcessTreeFile(filename, language_dir, safe_file_output)
+		regenerate.ProcessTreeFile(filename, language_dir, fsys)
 	}
-	safe_file_output.Commit()
+	fsys.Commit()
 }

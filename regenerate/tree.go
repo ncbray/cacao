@@ -3,6 +3,7 @@ package regenerate
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ncbray/compilerutil/fs"
 	"github.com/ncbray/compilerutil/writer"
 	"io/ioutil"
 	"path/filepath"
@@ -146,16 +147,17 @@ func generateGroupDump(group *GroupDecl, out *writer.TabbedWriter) {
 
 }
 
-func generateDump(filename string, decl *TreeDecl, output_dir string, safe_file_output *writer.SafeFileOutput) {
+func generateDump(filename string, decl *TreeDecl, output_dir string, fsys fs.FileSystem) {
 	outfile := filepath.Join(output_dir, decl.Dump)
 	fmt.Println("    ", filename, "=>", outfile)
-	f, err := safe_file_output.OutputFile(outfile, 0640)
+	t := fsys.TempFile()
+	tw, err := t.GetWriter()
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
+	defer tw.Close()
 
-	out := writer.MakeTabbedWriter("\t", f)
+	out := writer.MakeTabbedWriter("\t", tw)
 	packageName := extractPackageName(outfile)
 	rel_src, _ := filepath.Rel(filepath.Dir(outfile), filename)
 	writeHeader(packageName, rel_src, out)
@@ -174,19 +176,21 @@ func generateDump(filename string, decl *TreeDecl, output_dir string, safe_file_
 	for _, group := range decl.Groups {
 		generateGroupDump(group, out)
 	}
-	f.Close()
-	formatGoFile(f.Name())
+	tw.Close()
+
+	formatGoFile(t, fsys.OutputFile(outfile, 0640))
 }
 
-func generateTree(filename string, decl *TreeDecl, output_dir string, safe_file_output *writer.SafeFileOutput) {
+func generateTree(filename string, decl *TreeDecl, output_dir string, fsys fs.FileSystem) {
 	outfile := filepath.Join(output_dir, decl.File)
 	fmt.Println("    ", filename, "=>", outfile)
-	f, err := safe_file_output.OutputFile(outfile, 0640)
+	t := fsys.TempFile()
+	tw, err := t.GetWriter()
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
-	out := writer.MakeTabbedWriter("\t", f)
+	defer tw.Close()
+	out := writer.MakeTabbedWriter("\t", tw)
 	packageName := extractPackageName(outfile)
 	rel_src, _ := filepath.Rel(filepath.Dir(outfile), filename)
 	writeHeader(packageName, rel_src, out)
@@ -199,11 +203,12 @@ func generateTree(filename string, decl *TreeDecl, output_dir string, safe_file_
 	for _, group := range decl.Groups {
 		generateGroupDecl(group, out)
 	}
-	f.Close()
-	formatGoFile(f.Name())
+	tw.Close()
+
+	formatGoFile(t, fsys.OutputFile(outfile, 0640))
 }
 
-func ProcessTreeFile(filename string, output_dir string, safe_file_output *writer.SafeFileOutput) {
+func ProcessTreeFile(filename string, output_dir string, fsys fs.FileSystem) {
 	fmt.Println("Processing", filename)
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -214,8 +219,8 @@ func ProcessTreeFile(filename string, output_dir string, safe_file_output *write
 	if err != nil {
 		panic(err)
 	}
-	generateTree(filename, decl, output_dir, safe_file_output)
+	generateTree(filename, decl, output_dir, fsys)
 	if decl.Dump != "" {
-		generateDump(filename, decl, output_dir, safe_file_output)
+		generateDump(filename, decl, output_dir, fsys)
 	}
 }
