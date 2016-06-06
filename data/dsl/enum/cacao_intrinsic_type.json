@@ -1,69 +1,109 @@
 {
-    "File": "intrinsictype.go",
-    "Name": "IntrinsicType",
-    "Prefix": "INTRINSIC_TYPE",
-    "Fields": [
-	{
-	    "Name": "Text",
-	    "Type": "string"
-	},
-	{
-	    "Name": "Bits",
-	    "Type": "int"
-	},
-	{
-	    "Name": "Unsigned",
-	    "Type": "bool"
-	},
-	{
-	    "Name": "Float",
-	    "Type": "bool"
-	}
-    ],
-    "Enums": [
-	{
-	    "Name": "BOOL",
-	    "Fields": {"Text": "bool", "Bits": 1}
-	},
-	{
-	    "Name": "I8",
-	    "Fields": {"Text": "i8", "Bits": 8}
-	},
-	{
-	    "Name": "I16",
-	    "Fields": {"Text": "i16", "Bits": 16}
-	},
-	{
-	    "Name": "I32",
-	    "Fields": {"Text": "i32", "Bits": 32}
-	},
-	{
-	    "Name": "I64",
-	    "Fields": {"Text": "i64", "Bits": 64}
-	},
-	{
-	    "Name": "U8",
-	    "Fields": {"Text": "u8", "Bits": 8, "Unsigned": true}
-	},
-	{
-	    "Name": "U16",
-	    "Fields": {"Text": "u16", "Bits": 16, "Unsigned": true}
-	},
-	{
-	    "Name": "U32",
-	    "Fields": {"Text": "u32", "Bits": 32, "Unsigned": true}
-	},
-	{
-	    "Name": "U64",
-	    "Fields": {"Text": "u64", "Bits": 64, "Unsigned": true}
-	},
-	{
-	    "Name": "F32",
-	    "Fields": {"Text": "f32", "Bits": 32, "Float": true}
-	},
-	{
-	    "Name": "F64",
-	    "Fields": {"Text": "f64", "Bits": 64, "Float": true}
-	}
-    ]
+  "Package": "github.com/ncbray/cacao/language",
+  "File": "intrinsictype.go",
+  "Name": "IntrinsicType",
+  "Prefix": "INTRINSIC_TYPE",
+  "Fields": [
+    {
+      "Name": "Text",
+      "Type": "string"
+    },
+    {
+      "Name": "Bits",
+      "Type": "int"
+    },
+    {
+      "Name": "Unsigned",
+      "Type": "bool"
+    },
+    {
+      "Name": "Float",
+      "Type": "bool"
+    }
+  ],
+  "Enums": [
+    {
+      "Name": "BOOL",
+      "Fields": {
+        "Text": "bool",
+        "Bits": 1
+      }
+    },
+    {
+      "Name": "I8",
+      "Fields": {
+        "Text": "i8",
+        "Bits": 8
+      }
+    },
+    {
+      "Name": "I16",
+      "Fields": {
+        "Text": "i16",
+        "Bits": 16
+      }
+    },
+    {
+      "Name": "I32",
+      "Fields": {
+        "Text": "i32",
+        "Bits": 32
+      }
+    },
+    {
+      "Name": "I64",
+      "Fields": {
+        "Text": "i64",
+        "Bits": 64
+      }
+    },
+    {
+      "Name": "U8",
+      "Fields": {
+        "Text": "u8",
+        "Bits": 8,
+        "Unsigned": true
+      }
+    },
+    {
+      "Name": "U16",
+      "Fields": {
+        "Text": "u16",
+        "Bits": 16,
+        "Unsigned": true
+      }
+    },
+    {
+      "Name": "U32",
+      "Fields": {
+        "Text": "u32",
+        "Bits": 32,
+        "Unsigned": true
+      }
+    },
+    {
+      "Name": "U64",
+      "Fields": {
+        "Text": "u64",
+        "Bits": 64,
+        "Unsigned": true
+      }
+    },
+    {
+      "Name": "F32",
+      "Fields": {
+        "Text": "f32",
+        "Bits": 32,
+        "Float": true
+      }
+    },
+    {
+      "Name": "F64",
+      "Fields": {
+        "Text": "f64",
+        "Bits": 64,
+        "Float": true
+      }
+    }
+  ]
 }

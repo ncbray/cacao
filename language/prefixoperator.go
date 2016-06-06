@@ -1,6 +1,6 @@
 package language
 
-/* Generated from ../data/dsl/enum/cacao_prefix_operator.json, do not edit by hand. */
+/* Generated from cacao_prefix_operator.json, do not edit by hand. */
 
 import (
 	"github.com/ncbray/cacao/framework"

@@ -27,10 +27,12 @@ type GroupDecl struct {
 }
 
 type TreeDecl struct {
-	File   string
-	Dump   string
-	Nodes  []*StructDecl
-	Groups []*GroupDecl
+	DataSource string
+	Package    string
+	File       string
+	Dump       string
+	Nodes      []*StructDecl
+	Groups     []*GroupDecl
 }
 
 func generateNodeDecl(node *StructDecl, out *writer.TabbedWriter) {
@@ -147,9 +149,9 @@ func generateGroupDump(group *GroupDecl, out *writer.TabbedWriter) {
 
 }
 
-func generateDump(filename string, decl *TreeDecl, output_dir string, fsys fs.FileSystem) {
-	outfile := filepath.Join(output_dir, decl.Dump)
-	fmt.Println("    ", filename, "=>", outfile)
+func generateDump(decl *TreeDecl, output_dir string, fsys fs.FileSystem) {
+	outfile := filepath.Join(output_dir, decl.Package, decl.Dump)
+	fmt.Println("generating:", outfile)
 	t := fsys.TempFile()
 	tw, err := t.GetWriter()
 	if err != nil {
@@ -159,8 +161,7 @@ func generateDump(filename string, decl *TreeDecl, output_dir string, fsys fs.Fi
 
 	out := writer.MakeTabbedWriter("\t", tw)
 	packageName := extractPackageName(outfile)
-	rel_src, _ := filepath.Rel(filepath.Dir(outfile), filename)
-	writeHeader(packageName, rel_src, out)
+	writeHeader(packageName, decl.DataSource, out)
 
 	imports := []string{
 		"fmt",
@@ -181,9 +182,15 @@ func generateDump(filename string, decl *TreeDecl, output_dir string, fsys fs.Fi
 	formatGoFile(t, fsys.OutputFile(outfile, 0640))
 }
 
-func generateTree(filename string, decl *TreeDecl, output_dir string, fsys fs.FileSystem) {
-	outfile := filepath.Join(output_dir, decl.File)
-	fmt.Println("    ", filename, "=>", outfile)
+func generateTree(decl *TreeDecl, output_dir string, fsys fs.FileSystem) {
+	// Validate the package directory exists.
+	package_dir := filepath.Join(output_dir, decl.Package)
+	if !dirExists(package_dir) {
+		panic(package_dir)
+	}
+
+	outfile := filepath.Join(package_dir, decl.File)
+	fmt.Println("generating:", outfile)
 	t := fsys.TempFile()
 	tw, err := t.GetWriter()
 	if err != nil {
@@ -192,8 +199,7 @@ func generateTree(filename string, decl *TreeDecl, output_dir string, fsys fs.Fi
 	defer tw.Close()
 	out := writer.MakeTabbedWriter("\t", tw)
 	packageName := extractPackageName(outfile)
-	rel_src, _ := filepath.Rel(filepath.Dir(outfile), filename)
-	writeHeader(packageName, rel_src, out)
+	writeHeader(packageName, decl.DataSource, out)
 
 	for _, node := range decl.Nodes {
 		generateNodeDecl(node, out)
@@ -219,8 +225,14 @@ func ProcessTreeFile(filename string, output_dir string, fsys fs.FileSystem) {
 	if err != nil {
 		panic(err)
 	}
-	generateTree(filename, decl, output_dir, fsys)
+	_, decl.DataSource = filepath.Split(filename)
+	ProcessTree(decl, output_dir, fsys)
+	fmt.Println()
+}
+
+func ProcessTree(decl *TreeDecl, output_dir string, fsys fs.FileSystem) {
+	generateTree(decl, output_dir, fsys)
 	if decl.Dump != "" {
-		generateDump(filename, decl, output_dir, fsys)
+		generateDump(decl, output_dir, fsys)
 	}
 }

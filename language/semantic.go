@@ -76,16 +76,12 @@ func (semantic *semanticPass) registerName(name *Token, obj Nameable) {
 	}
 }
 
-func (semantic *semanticPass) indexDecl(node *FunctionDecl) {
-	f := &Function{
-		Name: node.Name.Text,
-	}
-	semantic.registerName(node.Name, f)
-}
-
-func (semantic *semanticPass) indexFile(file *File) {
-	for _, d := range file.Decls {
-		semantic.indexDecl(d)
+func (semantic *semanticPass) indexModuleNamespace(file *File) {
+	for _, node := range file.Decls {
+		f := &Function{
+			Name: node.Name.Text,
+		}
+		semantic.registerName(node.Name, f)
 	}
 }
 
@@ -340,7 +336,7 @@ func SemanticPass(node *File, status framework.CompileStatus) {
 	}
 
 	// Resolve names.
-	semantic.indexFile(node)
+	semantic.indexModuleNamespace(node)
 	if status.ErrorOccured() {
 		return
 	}
@@ -351,5 +347,6 @@ func SemanticPass(node *File, status framework.CompileStatus) {
 		return
 	}
 
+	// Process function bodies.
 	semantic.opFile(node)
 }

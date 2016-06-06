@@ -1,6 +1,6 @@
 package language
 
-/* Generated from ../data/dsl/tree/cacao.json, do not edit by hand. */
+/* Generated from cacao.json, do not edit by hand. */
 
 import (
 	"fmt"

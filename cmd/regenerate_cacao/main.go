@@ -43,7 +43,7 @@ func main() {
 	defer tdir.Cleanup()
 
 	fsys := fs.MakeBufferedFileSystem(tdir)
-	language_dir := filepath.Join(gopath, "src/github.com/ncbray/cacao/language")
+	language_dir := filepath.Join(gopath, "src")
 	for _, filename := range enums {
 		regenerate.ProcessEnumFile(filename, language_dir, fsys)
 	}

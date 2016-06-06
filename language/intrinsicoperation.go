@@ -1,6 +1,6 @@
 package language
 
-/* Generated from ../data/dsl/enum/cacao_intrinsic_operation.json, do not edit by hand. */
+/* Generated from cacao_intrinsic_operation.json, do not edit by hand. */
 
 type IntrinsicOperation int
 

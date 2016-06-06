@@ -66,6 +66,8 @@ type EnumIndexDecl struct {
 }
 
 type EnumTypeDecl struct {
+	DataSource     string
+	Package        string
 	File           string
 	Name           string
 	Prefix         string
@@ -122,13 +124,6 @@ func generateParseTree(tree *parseTree, fail string, out *writer.TabbedWriter) {
 func extractPackageName(filename string) string {
 	parts := strings.Split(filename, "/")
 	return parts[len(parts)-2]
-}
-
-func writeHeader(packageName string, sourceFile string, out *writer.TabbedWriter) {
-	out.WriteLine("package " + packageName)
-	out.EndOfLine()
-	out.WriteLine(fmt.Sprintf("/* Generated from %s, do not edit by hand. */", sourceFile))
-	out.EndOfLine()
 }
 
 func writeImports(imports []string, out *writer.TabbedWriter) {
@@ -232,8 +227,8 @@ type ProcessEnumContext struct {
 	Output fs.DataOutput
 }
 
-func generateEnumGo(decl *EnumTypeDecl, packageName string, rel_src string, out *writer.TabbedWriter) {
-	writeHeader(packageName, rel_src, out)
+func generateEnumGo(decl *EnumTypeDecl, packageName string, out *writer.TabbedWriter) {
+	writeHeader(packageName, decl.DataSource, out)
 
 	imports := []string{}
 	if decl.GenerateParser != "" {
@@ -323,7 +318,9 @@ func generateEnumGo(decl *EnumTypeDecl, packageName string, rel_src string, out 
 	}
 }
 
-func processEnumFile(filename string, output_dir string, fsys fs.FileSystem) {
+func ProcessEnumFile(filename string, output_dir string, fsys fs.FileSystem) {
+	fmt.Println("Processing", filename)
+
 	// Parse the JSON
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -334,9 +331,20 @@ func processEnumFile(filename string, output_dir string, fsys fs.FileSystem) {
 	if err != nil {
 		panic(err)
 	}
+	_, decl.DataSource = filepath.Split(filename)
+	ProcessEnum(decl, output_dir, fsys)
+	fmt.Println()
+}
 
-	outfile := filepath.Join(output_dir, decl.File)
-	fmt.Println("    ", filename, "=>", outfile)
+func ProcessEnum(decl *EnumTypeDecl, output_dir string, fsys fs.FileSystem) {
+	// Validate the package directory exists.
+	package_dir := filepath.Join(output_dir, decl.Package)
+	if !dirExists(package_dir) {
+		panic(package_dir)
+	}
+
+	outfile := filepath.Join(package_dir, decl.File)
+	fmt.Println("generating:", outfile)
 
 	t := fsys.TempFile()
 	tw, err := t.GetWriter()
@@ -345,14 +353,8 @@ func processEnumFile(filename string, output_dir string, fsys fs.FileSystem) {
 	}
 	out := writer.MakeTabbedWriter("\t", tw)
 	packageName := extractPackageName(outfile)
-	rel_src, _ := filepath.Rel(filepath.Dir(outfile), filename)
-	generateEnumGo(decl, packageName, rel_src, out)
+	generateEnumGo(decl, packageName, out)
 	tw.Close()
 
 	formatGoFile(t, fsys.OutputFile(outfile, 0640))
-}
-
-func ProcessEnumFile(filename string, output_dir string, fsys fs.FileSystem) {
-	fmt.Println("Processing", filename)
-	processEnumFile(filename, output_dir, fsys)
 }
