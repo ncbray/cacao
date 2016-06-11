@@ -1,12 +1,10 @@
 package regenerate
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/ncbray/compilerutil/fs"
 	"github.com/ncbray/compilerutil/writer"
 	"go/format"
-	"io/ioutil"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -316,24 +314,6 @@ func generateEnumGo(decl *EnumTypeDecl, packageName string, out *writer.TabbedWr
 		out.WriteLine("}")
 		out.EndOfLine()
 	}
-}
-
-func ProcessEnumFile(filename string, output_dir string, fsys fs.FileSystem) {
-	fmt.Println("Processing", filename)
-
-	// Parse the JSON
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-	decl := &EnumTypeDecl{}
-	err = json.Unmarshal(data, decl)
-	if err != nil {
-		panic(err)
-	}
-	_, decl.DataSource = filepath.Split(filename)
-	ProcessEnum(decl, output_dir, fsys)
-	fmt.Println()
 }
 
 func ProcessEnum(decl *EnumTypeDecl, output_dir string, fsys fs.FileSystem) {

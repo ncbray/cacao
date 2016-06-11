@@ -1,11 +1,9 @@
 package regenerate
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/ncbray/compilerutil/fs"
 	"github.com/ncbray/compilerutil/writer"
-	"io/ioutil"
 	"path/filepath"
 )
 
@@ -212,22 +210,6 @@ func generateTree(decl *TreeDecl, output_dir string, fsys fs.FileSystem) {
 	tw.Close()
 
 	formatGoFile(t, fsys.OutputFile(outfile, 0640))
-}
-
-func ProcessTreeFile(filename string, output_dir string, fsys fs.FileSystem) {
-	fmt.Println("Processing", filename)
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-	decl := &TreeDecl{}
-	err = json.Unmarshal(data, decl)
-	if err != nil {
-		panic(err)
-	}
-	_, decl.DataSource = filepath.Split(filename)
-	ProcessTree(decl, output_dir, fsys)
-	fmt.Println()
 }
 
 func ProcessTree(decl *TreeDecl, output_dir string, fsys fs.FileSystem) {

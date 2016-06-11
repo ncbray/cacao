@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/ncbray/cacao/regenerate"
 	"github.com/ncbray/compilerutil/fs"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -43,12 +46,37 @@ func main() {
 	defer tdir.Cleanup()
 
 	fsys := fs.MakeBufferedFileSystem(tdir)
-	language_dir := filepath.Join(gopath, "src")
+	output_dir := filepath.Join(gopath, "src")
 	for _, filename := range enums {
-		regenerate.ProcessEnumFile(filename, language_dir, fsys)
+		fmt.Println("Parsing", filename)
+		data, err := ioutil.ReadFile(filename)
+		if err != nil {
+			panic(err)
+		}
+		decl := &regenerate.EnumTypeDecl{}
+		err = json.Unmarshal(data, decl)
+		if err != nil {
+			panic(err)
+		}
+		_, decl.DataSource = filepath.Split(filename)
+
+		regenerate.ProcessEnum(decl, output_dir, fsys)
+		fmt.Println()
 	}
 	for _, filename := range trees {
-		regenerate.ProcessTreeFile(filename, language_dir, fsys)
+		fmt.Println("Processing", filename)
+		data, err := ioutil.ReadFile(filename)
+		if err != nil {
+			panic(err)
+		}
+		decl := &regenerate.TreeDecl{}
+		err = json.Unmarshal(data, decl)
+		if err != nil {
+			panic(err)
+		}
+		_, decl.DataSource = filepath.Split(filename)
+		regenerate.ProcessTree(decl, output_dir, fsys)
+		fmt.Println()
 	}
 	fsys.Commit()
 }
