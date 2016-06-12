@@ -24,86 +24,172 @@
   "Enums": [
     {
       "Name": "BOOL",
-      "Fields": {
-        "Text": "bool",
-        "Bits": 1
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "bool"
+        },
+        {
+          "Name": "Bits",
+          "Value": 1
+        }
+      ]
     },
     {
       "Name": "I8",
-      "Fields": {
-        "Text": "i8",
-        "Bits": 8
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "i8"
+        },
+        {
+          "Name": "Bits",
+          "Value": 8
+        }
+      ]
     },
     {
       "Name": "I16",
-      "Fields": {
-        "Text": "i16",
-        "Bits": 16
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "i16"
+        },
+        {
+          "Name": "Bits",
+          "Value": 16
+        }
+      ]
     },
     {
       "Name": "I32",
-      "Fields": {
-        "Text": "i32",
-        "Bits": 32
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "i32"
+        },
+        {
+          "Name": "Bits",
+          "Value": 32
+        }
+      ]
+
     },
     {
       "Name": "I64",
-      "Fields": {
-        "Text": "i64",
-        "Bits": 64
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "i64"
+        },
+        {
+          "Name": "Bits",
+          "Value": 64
+        }
+      ]
+
     },
     {
       "Name": "U8",
-      "Fields": {
-        "Text": "u8",
-        "Bits": 8,
-        "Unsigned": true
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "u8"
+        },
+        {
+          "Name": "Bits",
+          "Value": 8
+        },
+        {
+          "Name": "Unsigned",
+          "Value": true
+        }
+      ]
     },
     {
       "Name": "U16",
-      "Fields": {
-        "Text": "u16",
-        "Bits": 16,
-        "Unsigned": true
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "u16"
+        },
+        {
+          "Name": "Bits",
+          "Value": 16
+        },
+        {
+          "Name": "Unsigned",
+          "Value": true
+        }
+      ]
     },
     {
       "Name": "U32",
-      "Fields": {
-        "Text": "u32",
-        "Bits": 32,
-        "Unsigned": true
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "u32"
+        },
+        {
+          "Name": "Bits",
+          "Value": 32
+        },
+        {
+          "Name": "Unsigned",
+          "Value": true
+        }
+      ]
     },
     {
       "Name": "U64",
-      "Fields": {
-        "Text": "u64",
-        "Bits": 64,
-        "Unsigned": true
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "u64"
+        },
+        {
+          "Name": "Bits",
+          "Value": 64
+        },
+        {
+          "Name": "Unsigned",
+          "Value": true
+        }
+      ]
     },
     {
       "Name": "F32",
-      "Fields": {
-        "Text": "f32",
-        "Bits": 32,
-        "Float": true
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "f32"
+        },
+        {
+          "Name": "Bits",
+          "Value": 32
+        },
+        {
+          "Name": "Float",
+          "Value": true
+        }
+      ]
     },
     {
       "Name": "F64",
-      "Fields": {
-        "Text": "f64",
-        "Bits": 64,
-        "Float": true
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "f64"
+        },
+        {
+          "Name": "Bits",
+          "Value": 64
+        },
+        {
+          "Name": "Float",
+          "Value": true
+        }
+      ]
     }
   ]
 }

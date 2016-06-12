@@ -55,7 +55,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		decl := &regenerate.EnumTypeDecl{}
+		decl := &regenerate.EnumDecl{}
 		err = json.Unmarshal(data, decl)
 		if err != nil {
 			panic(err)

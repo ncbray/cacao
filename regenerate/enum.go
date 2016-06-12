@@ -48,34 +48,39 @@ func newParseTree() *parseTree {
 	return &parseTree{Children: map[rune]*parseTree{}}
 }
 
-type EnumDecl struct {
-	Name   string
-	Fields map[string]interface{}
+type EnumInstanceField struct {
+	Name  string
+	Value interface{}
 }
 
-type EnumFieldDecl struct {
+type EnumInstance struct {
+	Name   string
+	Fields []*EnumInstanceField
+}
+
+type EnumDeclField struct {
 	Name string
 	Type string
 }
 
-type EnumIndexDecl struct {
+type EnumIndex struct {
 	Name string
 	Path []string
 }
 
-type EnumTypeDecl struct {
+type EnumDecl struct {
 	DataSource     string
 	Package        string
 	File           string
 	Name           string
 	Prefix         string
 	GenerateParser string
-	Fields         []*EnumFieldDecl
-	Indexes        []*EnumIndexDecl
-	Enums          []*EnumDecl
+	Fields         []*EnumDeclField
+	Indexes        []*EnumIndex
+	Enums          []*EnumInstance
 }
 
-func (decl *EnumTypeDecl) getField(name string) (*EnumFieldDecl, bool) {
+func (decl *EnumDecl) getField(name string) (*EnumDeclField, bool) {
 	for _, f := range decl.Fields {
 		if f.Name == name {
 			return f, true
@@ -137,7 +142,7 @@ func writeImports(imports []string, out *writer.TabbedWriter) {
 	}
 }
 
-func formatFieldValue(f *EnumFieldDecl, value interface{}) string {
+func formatFieldValue(f *EnumDeclField, value interface{}) string {
 	switch value := value.(type) {
 	case string:
 		if f.Type == "string" {
@@ -151,7 +156,7 @@ func formatFieldValue(f *EnumFieldDecl, value interface{}) string {
 	}
 }
 
-func pathRemainerType(decl *EnumTypeDecl, idx *EnumIndexDecl, pos int) string {
+func pathRemainerType(decl *EnumDecl, idx *EnumIndex, pos int) string {
 	if pos >= len(idx.Path) {
 		return "*" + decl.Name + "Info"
 	} else {
@@ -164,7 +169,16 @@ func pathRemainerType(decl *EnumTypeDecl, idx *EnumIndexDecl, pos int) string {
 	}
 }
 
-func WriteIndex(decl *EnumTypeDecl, idx *EnumIndexDecl, pos int, enums []*EnumDecl, out *writer.TabbedWriter) {
+func (e *EnumInstance) getField(name string) (*EnumInstanceField, bool) {
+	for _, f := range e.Fields {
+		if f.Name == name {
+			return f, true
+		}
+	}
+	return nil, false
+}
+
+func WriteIndex(decl *EnumDecl, idx *EnumIndex, pos int, enums []*EnumInstance, out *writer.TabbedWriter) {
 	if pos >= len(idx.Path) {
 		if len(enums) != 1 {
 			panic(enums)
@@ -190,16 +204,16 @@ func WriteIndex(decl *EnumTypeDecl, idx *EnumIndexDecl, pos int, enums []*EnumDe
 		out.EndOfLine()
 		out.Indent()
 
-		lut := map[string][]*EnumDecl{}
+		lut := map[string][]*EnumInstance{}
 		keys := []string{}
 
 		for _, e := range enums {
-			value, ok := e.Fields[f.Name]
+			value, ok := e.getField(f.Name)
 			if !ok {
 				continue
 			}
 			// HACK bucket by string value
-			text := formatFieldValue(f, value)
+			text := formatFieldValue(f, value.Value)
 			existing, ok := lut[text]
 			if !ok {
 				keys = append(keys, text)
@@ -225,7 +239,7 @@ type ProcessEnumContext struct {
 	Output fs.DataOutput
 }
 
-func generateEnumGo(decl *EnumTypeDecl, packageName string, out *writer.TabbedWriter) {
+func generateEnumGo(decl *EnumDecl, packageName string, out *writer.TabbedWriter) {
 	writeHeader(packageName, decl.DataSource, out)
 
 	imports := []string{}
@@ -268,9 +282,9 @@ func generateEnumGo(decl *EnumTypeDecl, packageName string, out *writer.TabbedWr
 		out.WriteLine(fmt.Sprintf("Enum: %s,", fullName))
 		out.WriteLine(fmt.Sprintf("Name: %#v,", fullName))
 		for _, f := range decl.Fields {
-			value, ok := e.Fields[f.Name]
+			value, ok := e.getField(f.Name)
 			if ok {
-				out.WriteLine(fmt.Sprintf("%s: %s,", f.Name, formatFieldValue(f, value)))
+				out.WriteLine(fmt.Sprintf("%s: %s,", f.Name, formatFieldValue(f, value.Value)))
 			}
 		}
 		out.Dedent()
@@ -303,7 +317,8 @@ func generateEnumGo(decl *EnumTypeDecl, packageName string, out *writer.TabbedWr
 		tree := newParseTree()
 		fail := "INVALID_" + decl.Prefix + ", false"
 		for _, e := range decl.Enums {
-			key := e.Fields[decl.GenerateParser].(string)
+			f, _ := e.getField(decl.GenerateParser)
+			key := f.Value.(string)
 			tree.Add([]rune(key), decl.Prefix+"_"+e.Name+", true")
 		}
 
@@ -316,7 +331,7 @@ func generateEnumGo(decl *EnumTypeDecl, packageName string, out *writer.TabbedWr
 	}
 }
 
-func ProcessEnum(decl *EnumTypeDecl, output_dir string, fsys fs.FileSystem) {
+func ProcessEnum(decl *EnumDecl, output_dir string, fsys fs.FileSystem) {
 	// Validate the package directory exists.
 	package_dir := filepath.Join(output_dir, decl.Package)
 	if !dirExists(package_dir) {

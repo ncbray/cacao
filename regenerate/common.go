@@ -20,7 +20,7 @@ func writeHeader(packageName string, sourceFile string, out *writer.TabbedWriter
 }
 
 type Declarations struct {
-	Enums []*EnumTypeDecl
+	Enums []*EnumDecl
 	Trees []*TreeDecl
 }
 

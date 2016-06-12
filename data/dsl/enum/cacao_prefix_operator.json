@@ -13,27 +13,39 @@
   "Enums": [
     {
       "Name": "NOT",
-      "Fields": {
-        "Text": "!"
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "!"
+        }
+      ]
     },
     {
       "Name": "BIT_NOT",
-      "Fields": {
-        "Text": "~"
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "~"
+        }
+      ]
     },
     {
       "Name": "POS",
-      "Fields": {
-        "Text": "+"
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "+"
+        }
+      ]
     },
     {
       "Name": "NEG",
-      "Fields": {
-        "Text": "-"
-      }
+      "Fields": [
+        {
+          "Name": "Text",
+          "Value": "-"
+        }
+      ]
     }
   ]
 }
