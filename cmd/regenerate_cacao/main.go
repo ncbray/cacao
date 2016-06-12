@@ -45,6 +45,8 @@ func main() {
 	}
 	defer tdir.Cleanup()
 
+	decls := &regenerate.Declarations{}
+
 	fsys := fs.MakeBufferedFileSystem(tdir)
 	output_dir := filepath.Join(gopath, "src")
 	for _, filename := range enums {
@@ -59,9 +61,7 @@ func main() {
 			panic(err)
 		}
 		_, decl.DataSource = filepath.Split(filename)
-
-		regenerate.ProcessEnum(decl, output_dir, fsys)
-		fmt.Println()
+		decls.Enums = append(decls.Enums, decl)
 	}
 	for _, filename := range trees {
 		fmt.Println("Processing", filename)
@@ -75,8 +75,10 @@ func main() {
 			panic(err)
 		}
 		_, decl.DataSource = filepath.Split(filename)
-		regenerate.ProcessTree(decl, output_dir, fsys)
-		fmt.Println()
+		decls.Trees = append(decls.Trees, decl)
 	}
+
+	regenerate.ProcessDeclarations(decls, output_dir, fsys)
+
 	fsys.Commit()
 }
