@@ -1,0 +1,5 @@
+Name,Text,Logical,Bitwise,IntArith,FloatArith
+NOT,!,x,,,
+BIT_NOT,~,,x,,
+POS,+,,,x,x
+NEG,-,,,x,x

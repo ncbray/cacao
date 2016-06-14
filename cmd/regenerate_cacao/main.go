@@ -11,7 +11,9 @@ import (
 	"strings"
 )
 
-func jsonFilesInDir(dirname string) []string {
+func jsonFilesInDir(gopath string) []string {
+	dirname := filepath.Join(gopath, "src/github.com/ncbray/cacao/data")
+
 	f, err := os.Open(dirname)
 	if err != nil {
 		panic(err)
@@ -29,26 +31,12 @@ func jsonFilesInDir(dirname string) []string {
 	return out
 }
 
-func main() {
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		println("GOPATH must be set.")
-	}
+func declarationsFromJSON(data_dir string) *regenerate.Declarations {
+	decls := &regenerate.Declarations{}
 
-	data_dir := filepath.Join(gopath, "src/github.com/ncbray/cacao/data")
 	enums := jsonFilesInDir(filepath.Join(data_dir, "dsl/enum"))
 	trees := jsonFilesInDir(filepath.Join(data_dir, "dsl/tree"))
 
-	tdir, err := fs.MakeTempDir("compiler_outputs_")
-	if err != nil {
-		panic(err)
-	}
-	defer tdir.Cleanup()
-
-	decls := &regenerate.Declarations{}
-
-	fsys := fs.MakeBufferedFileSystem(tdir)
-	output_dir := filepath.Join(gopath, "src")
 	for _, filename := range enums {
 		fmt.Println("Parsing", filename)
 		data, err := ioutil.ReadFile(filename)
@@ -77,8 +65,27 @@ func main() {
 		_, decl.DataSource = filepath.Split(filename)
 		decls.Trees = append(decls.Trees, decl)
 	}
+	return decls
+}
 
-	regenerate.ProcessDeclarations(decls, output_dir, fsys)
+func main() {
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		println("GOPATH must be set.")
+	}
 
+	tdir, err := fs.MakeTempDir("compiler_outputs_")
+	if err != nil {
+		panic(err)
+	}
+	defer tdir.Cleanup()
+
+	fsys := fs.MakeBufferedFileSystem(tdir)
+
+	data_dir := filepath.Join(gopath, "src/github.com/ncbray/cacao/data")
+	Synthesize(data_dir, declarations, fsys)
+
+	output_dir := filepath.Join(gopath, "src")
+	regenerate.ProcessDeclarations(declarations, output_dir, fsys)
 	fsys.Commit()
 }

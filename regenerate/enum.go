@@ -89,6 +89,19 @@ func (decl *EnumDecl) getField(name string) (*EnumDeclField, bool) {
 	return nil, false
 }
 
+func isZeroValue(v interface{}) bool {
+	switch v := v.(type) {
+	case bool:
+		return !v
+	case int:
+		return v == 0
+	case string:
+		return v == ""
+	default:
+		return v == nil
+	}
+}
+
 func fallback(a string, b string) string {
 	if a != "" {
 		return a
@@ -283,7 +296,7 @@ func generateEnumGo(decl *EnumDecl, packageName string, out *writer.TabbedWriter
 		out.WriteLine(fmt.Sprintf("Name: %#v,", fullName))
 		for _, f := range decl.Fields {
 			value, ok := e.getField(f.Name)
-			if ok {
+			if ok && !isZeroValue(value.Value) {
 				out.WriteLine(fmt.Sprintf("%s: %s,", f.Name, formatFieldValue(f, value.Value)))
 			}
 		}

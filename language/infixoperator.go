@@ -1,6 +1,6 @@
 package language
 
-/* Generated from cacao_infix_operator.json, do not edit by hand. */
+/* Generated from regenerate_cacao, do not edit by hand. */
 
 import (
 	"github.com/ncbray/cacao/framework"

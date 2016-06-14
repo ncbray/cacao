@@ -1,6 +1,6 @@
 package language
 
-/* Generated from cacao_intrinsic_type.json, do not edit by hand. */
+/* Generated from regenerate_cacao, do not edit by hand. */
 
 type IntrinsicType int
 
@@ -31,10 +31,11 @@ type IntrinsicTypeInfo struct {
 
 var IntrinsicTypeInfos = []*IntrinsicTypeInfo{
 	{
-		Enum: INTRINSIC_TYPE_BOOL,
-		Name: "INTRINSIC_TYPE_BOOL",
-		Text: "bool",
-		Bits: 1,
+		Enum:     INTRINSIC_TYPE_BOOL,
+		Name:     "INTRINSIC_TYPE_BOOL",
+		Text:     "bool",
+		Bits:     1,
+		Unsigned: true,
 	},
 	{
 		Enum: INTRINSIC_TYPE_I8,

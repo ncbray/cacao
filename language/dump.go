@@ -1,6 +1,6 @@
 package language
 
-/* Generated from cacao.json, do not edit by hand. */
+/* Generated from regenerate_cacao, do not edit by hand. */
 
 import (
 	"fmt"
