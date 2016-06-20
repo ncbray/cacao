@@ -4,13 +4,13 @@ import (
 	"github.com/ncbray/cacao/regenerate"
 )
 
-var declarations = &regenerate.Declarations{
+var ast = &regenerate.Declarations{
+	DataSource: "regenerate_cacao",
+	Package:    "github.com/ncbray/cacao/language",
+	File:       "ast.go",
 	Trees: []*regenerate.TreeDecl{
 		{
-			DataSource: "regenerate_cacao",
-			Package:    "github.com/ncbray/cacao/language",
-			File:       "ast.go",
-			Dump:       "dump.go",
+			Dump: true,
 			Nodes: []*regenerate.StructDecl{
 				{
 					Name: "Token",

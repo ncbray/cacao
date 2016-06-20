@@ -87,7 +87,7 @@ func getBoolType(intrinsic_types []*IntrinsicTypeInfo) *IntrinsicTypeInfo {
 	return nil
 }
 
-func Synthesize(data_dir string, decl *regenerate.Declarations, fsys fs.FileSystem) {
+func Synthesize(data_dir string, decls []*regenerate.Declarations, fsys fs.FileSystem) []*regenerate.Declarations {
 	fsys = fs.MakeRelative(fsys, data_dir)
 	intrinsic_types := getIntrinsicTypes(fsys)
 	prefix_operators := getPrefixOperators(fsys)
@@ -115,8 +115,6 @@ func Synthesize(data_dir string, decl *regenerate.Declarations, fsys fs.FileSyst
 		}
 	}
 
-	enums := []*regenerate.EnumDecl{}
-
 	instances := make([]*regenerate.EnumInstance, len(intrinsic_types))
 	for i, intrinsic_type := range intrinsic_types {
 		instances[i] = &regenerate.EnumInstance{
@@ -142,31 +140,35 @@ func Synthesize(data_dir string, decl *regenerate.Declarations, fsys fs.FileSyst
 		}
 	}
 
-	enums = append(enums, &regenerate.EnumDecl{
+	decls = append(decls, &regenerate.Declarations{
 		DataSource: "regenerate_cacao",
 		Package:    "github.com/ncbray/cacao/language",
 		File:       "intrinsictype.go",
-		Name:       "IntrinsicType",
-		Prefix:     "INTRINSIC_TYPE",
-		Fields: []*regenerate.EnumDeclField{
-			{
-				Name: "Text",
-				Type: "string",
-			},
-			{
-				Name: "Bits",
-				Type: "int",
-			},
-			{
-				Name: "Unsigned",
-				Type: "bool",
-			},
-			{
-				Name: "Float",
-				Type: "bool",
+		Enums: []*regenerate.EnumDecl{
+			&regenerate.EnumDecl{
+				Name:   "IntrinsicType",
+				Prefix: "INTRINSIC_TYPE",
+				Fields: []*regenerate.EnumDeclField{
+					{
+						Name: "Text",
+						Type: "string",
+					},
+					{
+						Name: "Bits",
+						Type: "int",
+					},
+					{
+						Name: "Unsigned",
+						Type: "bool",
+					},
+					{
+						Name: "Float",
+						Type: "bool",
+					},
+				},
+				Enums: instances,
 			},
 		},
-		Enums: instances,
 	})
 
 	instances = make([]*regenerate.EnumInstance, len(infix_operators))
@@ -186,24 +188,28 @@ func Synthesize(data_dir string, decl *regenerate.Declarations, fsys fs.FileSyst
 		}
 	}
 
-	enums = append(enums, &regenerate.EnumDecl{
-		DataSource:     "regenerate_cacao",
-		Package:        "github.com/ncbray/cacao/language",
-		File:           "infixoperator.go",
-		Name:           "InfixOperator",
-		Prefix:         "INFIX_OPERATOR",
-		GenerateParser: "Text",
-		Fields: []*regenerate.EnumDeclField{
-			{
-				Name: "Text",
-				Type: "string",
-			},
-			{
-				Name: "Precedence",
-				Type: "int",
+	decls = append(decls, &regenerate.Declarations{
+		DataSource: "regenerate_cacao",
+		Package:    "github.com/ncbray/cacao/language",
+		File:       "infixoperator.go",
+		Enums: []*regenerate.EnumDecl{
+			&regenerate.EnumDecl{
+				Name:           "InfixOperator",
+				Prefix:         "INFIX_OPERATOR",
+				GenerateParser: "Text",
+				Fields: []*regenerate.EnumDeclField{
+					{
+						Name: "Text",
+						Type: "string",
+					},
+					{
+						Name: "Precedence",
+						Type: "int",
+					},
+				},
+				Enums: instances,
 			},
 		},
-		Enums: instances,
 	})
 
 	instances = []*regenerate.EnumInstance{}
@@ -252,42 +258,47 @@ func Synthesize(data_dir string, decl *regenerate.Declarations, fsys fs.FileSyst
 		}
 	}
 
-	enums = append(enums, &regenerate.EnumDecl{
+	decls = append(decls, &regenerate.Declarations{
 		DataSource: "regenerate_cacao",
 		Package:    "github.com/ncbray/cacao/language",
 		File:       "intrinsicoperation.go",
-		Name:       "IntrinsicOperation",
-		Prefix:     "INTRINSIC_OPERATION",
-		Fields: []*regenerate.EnumDeclField{
-			{
-				Name: "InfixOperator",
-				Type: "InfixOperator",
-			},
-			{
-				Name: "InfixLeft",
-				Type: "IntrinsicType",
-			},
-			{
-				Name: "InfixRight",
-				Type: "IntrinsicType",
-			},
-			{
-				Name: "InfixResult",
-				Type: "IntrinsicType",
-			},
-		},
-		Indexes: []*regenerate.EnumIndex{
-			{
-				Name: "InfixToIntrinsic",
-				Path: []string{
-					"InfixOperator",
-					"InfixLeft",
-					"InfixRight",
+
+		Enums: []*regenerate.EnumDecl{
+			&regenerate.EnumDecl{
+				Name:   "IntrinsicOperation",
+				Prefix: "INTRINSIC_OPERATION",
+				Fields: []*regenerate.EnumDeclField{
+					{
+						Name: "InfixOperator",
+						Type: "InfixOperator",
+					},
+					{
+						Name: "InfixLeft",
+						Type: "IntrinsicType",
+					},
+					{
+						Name: "InfixRight",
+						Type: "IntrinsicType",
+					},
+					{
+						Name: "InfixResult",
+						Type: "IntrinsicType",
+					},
 				},
+				Indexes: []*regenerate.EnumIndex{
+					{
+						Name: "InfixToIntrinsic",
+						Path: []string{
+							"InfixOperator",
+							"InfixLeft",
+							"InfixRight",
+						},
+					},
+				},
+				Enums: instances,
 			},
 		},
-		Enums: instances,
 	})
 
-	decl.Enums = enums
+	return decls
 }

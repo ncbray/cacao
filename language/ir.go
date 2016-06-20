@@ -38,10 +38,6 @@ type Function struct {
 	Type      *FunctionType
 	NumParams int
 	Locals    []*LocalSlot
-
-	Graph *Graph
-	Entry ControlID
-	Exit  ControlID
 }
 
 func (obj *Function) isNameable() {

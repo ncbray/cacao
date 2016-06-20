@@ -14,7 +14,6 @@ type abstractValue interface {
 type typedValue struct {
 	P int
 	T Type
-	V ValueID
 }
 
 func (value *typedValue) Pos() int {
@@ -107,8 +106,6 @@ func (semantic *semanticPass) typeTypeRef(node TypeRef) Type {
 
 func (semantic *semanticPass) typeDecl(node *FunctionDecl) {
 	f := semantic.recoverFunction(node)
-
-	f.Graph = CreateGraph()
 
 	ptypes := make([]Type, len(node.Params))
 	for i, p := range node.Params {

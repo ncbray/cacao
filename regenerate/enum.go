@@ -4,23 +4,8 @@ import (
 	"fmt"
 	"github.com/ncbray/compilerutil/fs"
 	"github.com/ncbray/compilerutil/writer"
-	"go/format"
-	"path/filepath"
 	"sort"
-	"strings"
 )
-
-func formatGoFile(src fs.DataInput, dst fs.DataOutput) error {
-	data, err := src.GetBytes()
-	if err != nil {
-		return err
-	}
-	data, err = format.Source(data)
-	if err != nil {
-		return err
-	}
-	return dst.SetBytes(data)
-}
 
 type parseTree struct {
 	Value    string
@@ -69,9 +54,6 @@ type EnumIndex struct {
 }
 
 type EnumDecl struct {
-	DataSource     string
-	Package        string
-	File           string
 	Name           string
 	Prefix         string
 	GenerateParser string
@@ -134,24 +116,6 @@ func generateParseTree(tree *parseTree, fail string, out *writer.TabbedWriter) {
 		out.WriteLine("}")
 	} else {
 		out.WriteLine(fmt.Sprintf("return %s", fallback(tree.Value, fail)))
-	}
-}
-
-func extractPackageName(filename string) string {
-	parts := strings.Split(filename, "/")
-	return parts[len(parts)-2]
-}
-
-func writeImports(imports []string, out *writer.TabbedWriter) {
-	if len(imports) > 0 {
-		out.WriteLine("import (")
-		out.Indent()
-		for _, imp := range imports {
-			out.WriteLine(fmt.Sprintf("%#v", imp))
-		}
-		out.Dedent()
-		out.WriteLine(")")
-		out.EndOfLine()
 	}
 }
 
@@ -252,15 +216,13 @@ type ProcessEnumContext struct {
 	Output fs.DataOutput
 }
 
-func generateEnumGo(decl *EnumDecl, packageName string, out *writer.TabbedWriter) {
-	writeHeader(packageName, decl.DataSource, out)
-
-	imports := []string{}
+func getEnumImports(decl *EnumDecl, imports map[string]bool) {
 	if decl.GenerateParser != "" {
-		imports = append(imports, "github.com/ncbray/cacao/framework")
+		imports["github.com/ncbray/cacao/framework"] = true
 	}
-	writeImports(imports, out)
+}
 
+func generateEnum(decl *EnumDecl, out *writer.TabbedWriter) {
 	out.WriteLine(fmt.Sprintf("type %s int", decl.Name))
 	out.EndOfLine()
 	out.WriteLine("const (")
@@ -342,27 +304,4 @@ func generateEnumGo(decl *EnumDecl, packageName string, out *writer.TabbedWriter
 		out.WriteLine("}")
 		out.EndOfLine()
 	}
-}
-
-func ProcessEnum(decl *EnumDecl, output_dir string, fsys fs.FileSystem) {
-	// Validate the package directory exists.
-	package_dir := filepath.Join(output_dir, decl.Package)
-	if !dirExists(package_dir) {
-		panic(package_dir)
-	}
-
-	outfile := filepath.Join(package_dir, decl.File)
-	fmt.Println("generating:", outfile)
-
-	t := fsys.TempFile()
-	tw, err := t.GetWriter()
-	if err != nil {
-		panic(err)
-	}
-	out := writer.MakeTabbedWriter("\t", tw)
-	packageName := extractPackageName(outfile)
-	generateEnumGo(decl, packageName, out)
-	tw.Close()
-
-	formatGoFile(t, fsys.OutputFile(outfile, 0640))
 }
