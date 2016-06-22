@@ -157,14 +157,14 @@ func (semantic *semanticPass) opBlock(node *Block) abstractValue {
 func (semantic *semanticPass) extractIntrinsicType(value abstractValue) (IntrinsicType, bool) {
 	switch value := value.(type) {
 	case *poisonValue:
-		return INVALID_INTRINSIC_TYPE, false
+		return 0, false
 	default:
 		switch t := value.Type().(type) {
 		case *IntrinsicTypeX:
 			return t.UID, true
 		default:
 			semantic.status.LocationError(value.Pos(), "expected intrinsic type")
-			return INVALID_INTRINSIC_TYPE, false
+			return 0, false
 		}
 	}
 }

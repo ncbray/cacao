@@ -18,17 +18,17 @@ type StructDecl struct {
 }
 
 type GroupDecl struct {
-	Name  string
-	Nodes []*StructDecl
+	Name    string
+	Structs []*StructDecl
 }
 
 type TreeDecl struct {
-	Dump   bool
-	Nodes  []*StructDecl
-	Groups []*GroupDecl
+	Dump    bool
+	Structs []*StructDecl
+	Groups  []*GroupDecl
 }
 
-func generateNodeDecl(node *StructDecl, out *writer.TabbedWriter) {
+func generateStructDecl(node *StructDecl, out *writer.TabbedWriter) {
 	out.WriteLine(fmt.Sprintf("type %s struct {", node.Name))
 	out.Indent()
 	for _, field := range node.Fields {
@@ -56,8 +56,8 @@ func generateGroupDecl(group *GroupDecl, out *writer.TabbedWriter) {
 
 	out.EndOfLine()
 
-	for _, node := range group.Nodes {
-		generateNodeDecl(node, out)
+	for _, node := range group.Structs {
+		generateStructDecl(node, out)
 		out.EndOfLine()
 
 		out.WriteLine(fmt.Sprintf("func (node *%s) is%s() {", node.Name, group.Name))
@@ -119,14 +119,14 @@ func generateNodeDump(node *StructDecl, out *writer.TabbedWriter) {
 }
 
 func generateGroupDump(group *GroupDecl, out *writer.TabbedWriter) {
-	for _, node := range group.Nodes {
+	for _, node := range group.Structs {
 		generateNodeDump(node, out)
 		out.EndOfLine()
 	}
 	out.WriteLine(fmt.Sprintf("func dump%s(node %s, out *writer.TabbedWriter) {", group.Name, group.Name))
 	out.Indent()
 	out.WriteLine("switch node := node.(type) {")
-	for _, node := range group.Nodes {
+	for _, node := range group.Structs {
 		out.WriteLine(fmt.Sprintf("case *%s:", node.Name))
 		out.Indent()
 		out.WriteLine(fmt.Sprintf("dump%s(node, out)", node.Name))
@@ -143,7 +143,7 @@ func generateGroupDump(group *GroupDecl, out *writer.TabbedWriter) {
 }
 
 func generateDump(decl *TreeDecl, out *writer.TabbedWriter) {
-	for _, node := range decl.Nodes {
+	for _, node := range decl.Structs {
 		generateNodeDump(node, out)
 		out.EndOfLine()
 	}
@@ -161,8 +161,8 @@ func getTreeImports(decl *TreeDecl, imports map[string]bool) {
 }
 
 func generateTree(decl *TreeDecl, out *writer.TabbedWriter) {
-	for _, node := range decl.Nodes {
-		generateNodeDecl(node, out)
+	for _, node := range decl.Structs {
+		generateStructDecl(node, out)
 		out.EndOfLine()
 	}
 	for _, group := range decl.Groups {

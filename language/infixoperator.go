@@ -6,10 +6,9 @@ import (
 	"github.com/ncbray/cacao/framework"
 )
 
-type InfixOperator int
+type InfixOperator uint8
 
 const (
-	INVALID_INFIX_OPERATOR InfixOperator = -1
 	INFIX_OPERATOR_MUL     InfixOperator = 0
 	INFIX_OPERATOR_DIV     InfixOperator = 1
 	INFIX_OPERATOR_MOD     InfixOperator = 2
@@ -165,7 +164,7 @@ func ParseInfixOperator(state *framework.ParserState) (InfixOperator, bool) {
 			state.Consume()
 			return INFIX_OPERATOR_CMP_NE, true
 		default:
-			return INVALID_INFIX_OPERATOR, false
+			return 0, false
 		}
 	case '%':
 		state.Consume()
@@ -210,7 +209,7 @@ func ParseInfixOperator(state *framework.ParserState) (InfixOperator, bool) {
 			state.Consume()
 			return INFIX_OPERATOR_CMP_EQ, true
 		default:
-			return INVALID_INFIX_OPERATOR, false
+			return 0, false
 		}
 	case '>':
 		state.Consume()
@@ -237,6 +236,6 @@ func ParseInfixOperator(state *framework.ParserState) (InfixOperator, bool) {
 			return INFIX_OPERATOR_BIT_IOR, true
 		}
 	default:
-		return INVALID_INFIX_OPERATOR, false
+		return 0, false
 	}
 }

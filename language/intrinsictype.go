@@ -2,22 +2,21 @@ package language
 
 /* Generated from regenerate_cacao, do not edit by hand. */
 
-type IntrinsicType int
+type IntrinsicType uint8
 
 const (
-	INVALID_INTRINSIC_TYPE IntrinsicType = -1
-	INTRINSIC_TYPE_BOOL    IntrinsicType = 0
-	INTRINSIC_TYPE_I8      IntrinsicType = 1
-	INTRINSIC_TYPE_I16     IntrinsicType = 2
-	INTRINSIC_TYPE_I32     IntrinsicType = 3
-	INTRINSIC_TYPE_I64     IntrinsicType = 4
-	INTRINSIC_TYPE_U8      IntrinsicType = 5
-	INTRINSIC_TYPE_U16     IntrinsicType = 6
-	INTRINSIC_TYPE_U32     IntrinsicType = 7
-	INTRINSIC_TYPE_U64     IntrinsicType = 8
-	INTRINSIC_TYPE_F32     IntrinsicType = 9
-	INTRINSIC_TYPE_F64     IntrinsicType = 10
-	NUM_INTRINSIC_TYPE     IntrinsicType = 11
+	INTRINSIC_TYPE_BOOL IntrinsicType = 0
+	INTRINSIC_TYPE_I8   IntrinsicType = 1
+	INTRINSIC_TYPE_I16  IntrinsicType = 2
+	INTRINSIC_TYPE_I32  IntrinsicType = 3
+	INTRINSIC_TYPE_I64  IntrinsicType = 4
+	INTRINSIC_TYPE_U8   IntrinsicType = 5
+	INTRINSIC_TYPE_U16  IntrinsicType = 6
+	INTRINSIC_TYPE_U32  IntrinsicType = 7
+	INTRINSIC_TYPE_U64  IntrinsicType = 8
+	INTRINSIC_TYPE_F32  IntrinsicType = 9
+	INTRINSIC_TYPE_F64  IntrinsicType = 10
+	NUM_INTRINSIC_TYPE  IntrinsicType = 11
 )
 
 type IntrinsicTypeInfo struct {

@@ -10,6 +10,19 @@ import (
 	"strings"
 )
 
+func isZeroValue(v interface{}) bool {
+	switch v := v.(type) {
+	case bool:
+		return !v
+	case int:
+		return v == 0
+	case string:
+		return v == ""
+	default:
+		return v == nil
+	}
+}
+
 func dirExists(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)

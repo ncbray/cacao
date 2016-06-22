@@ -2,10 +2,9 @@ package language
 
 /* Generated from regenerate_cacao, do not edit by hand. */
 
-type IntrinsicOperation int
+type IntrinsicOperation uint8
 
 const (
-	INVALID_INTRINSIC_OPERATION      IntrinsicOperation = -1
 	INTRINSIC_OPERATION_BOOL_BIT_AND IntrinsicOperation = 0
 	INTRINSIC_OPERATION_BOOL_BIT_XOR IntrinsicOperation = 1
 	INTRINSIC_OPERATION_BOOL_BIT_IOR IntrinsicOperation = 2

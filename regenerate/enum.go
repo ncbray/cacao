@@ -8,11 +8,11 @@ import (
 )
 
 type parseTree struct {
-	Value    string
+	Action   string
 	Children map[rune]*parseTree
 }
 
-func (tree *parseTree) Add(path []rune, value string) {
+func (tree *parseTree) Add(path []rune, action string) {
 	if len(path) > 0 {
 		current := path[0]
 		child, ok := tree.Children[current]
@@ -20,12 +20,12 @@ func (tree *parseTree) Add(path []rune, value string) {
 			child = newParseTree()
 			tree.Children[current] = child
 		}
-		child.Add(path[1:], value)
+		child.Add(path[1:], action)
 	} else {
-		if tree.Value != "" {
-			panic(value)
+		if tree.Action != "" {
+			panic(action)
 		}
-		tree.Value = value
+		tree.Action = action
 	}
 }
 
@@ -71,26 +71,6 @@ func (decl *EnumDecl) getField(name string) (*EnumDeclField, bool) {
 	return nil, false
 }
 
-func isZeroValue(v interface{}) bool {
-	switch v := v.(type) {
-	case bool:
-		return !v
-	case int:
-		return v == 0
-	case string:
-		return v == ""
-	default:
-		return v == nil
-	}
-}
-
-func fallback(a string, b string) string {
-	if a != "" {
-		return a
-	}
-	return b
-}
-
 func generateParseTree(tree *parseTree, fail string, out *writer.TabbedWriter) {
 	if len(tree.Children) > 0 {
 		runes := []int{}
@@ -111,11 +91,19 @@ func generateParseTree(tree *parseTree, fail string, out *writer.TabbedWriter) {
 		}
 		out.WriteLine("default:")
 		out.Indent()
-		out.WriteLine(fmt.Sprintf("return %s", fallback(tree.Value, fail)))
+		if tree.Action != "" {
+			out.WriteLine(tree.Action)
+		} else if fail != "" {
+			out.WriteLine(fail)
+		}
 		out.Dedent()
 		out.WriteLine("}")
 	} else {
-		out.WriteLine(fmt.Sprintf("return %s", fallback(tree.Value, fail)))
+		if tree.Action != "" {
+			out.WriteLine(tree.Action)
+		} else if fail != "" {
+			out.WriteLine(fail)
+		}
 	}
 }
 
@@ -222,12 +210,22 @@ func getEnumImports(decl *EnumDecl, imports map[string]bool) {
 	}
 }
 
+func typeForEnum(decl *EnumDecl) string {
+	n := len(decl.Enums)
+	if n <= 256 {
+		return "uint8"
+	} else if n <= 65536 {
+		return "uint16"
+	} else {
+		return "uint32"
+	}
+}
+
 func generateEnum(decl *EnumDecl, out *writer.TabbedWriter) {
-	out.WriteLine(fmt.Sprintf("type %s int", decl.Name))
+	out.WriteLine(fmt.Sprintf("type %s %s", decl.Name, typeForEnum(decl)))
 	out.EndOfLine()
 	out.WriteLine("const (")
 	out.Indent()
-	out.WriteLine(fmt.Sprintf("INVALID_%s %s = %d", decl.Prefix, decl.Name, -1))
 	for i, e := range decl.Enums {
 		fullName := decl.Prefix + "_" + e.Name
 		out.WriteLine(fmt.Sprintf("%s %s = %d", fullName, decl.Name, i))
@@ -290,16 +288,16 @@ func generateEnum(decl *EnumDecl, out *writer.TabbedWriter) {
 
 	if decl.GenerateParser != "" {
 		tree := newParseTree()
-		fail := "INVALID_" + decl.Prefix + ", false"
+		//fullName := decl.Prefix + "_" + e.Name
 		for _, e := range decl.Enums {
 			f, _ := e.getField(decl.GenerateParser)
 			key := f.Value.(string)
-			tree.Add([]rune(key), decl.Prefix+"_"+e.Name+", true")
+			tree.Add([]rune(key), "return "+decl.Prefix+"_"+e.Name+", true")
 		}
 
 		out.WriteLine(fmt.Sprintf("func Parse%s(state *framework.ParserState) (%s, bool) {", decl.Name, decl.Name))
 		out.Indent()
-		generateParseTree(tree, fail, out)
+		generateParseTree(tree, "return 0, false", out)
 		out.Dedent()
 		out.WriteLine("}")
 		out.EndOfLine()

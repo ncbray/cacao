@@ -11,7 +11,7 @@ var ast = &regenerate.Declarations{
 	Trees: []*regenerate.TreeDecl{
 		{
 			Dump: true,
-			Nodes: []*regenerate.StructDecl{
+			Structs: []*regenerate.StructDecl{
 				{
 					Name: "Token",
 					Fields: []*regenerate.FieldDecl{
@@ -54,7 +54,7 @@ var ast = &regenerate.Declarations{
 			Groups: []*regenerate.GroupDecl{
 				{
 					Name: "TypeRef",
-					Nodes: []*regenerate.StructDecl{
+					Structs: []*regenerate.StructDecl{
 						{
 							Name: "TypeName",
 							Fields: []*regenerate.FieldDecl{
@@ -69,7 +69,7 @@ var ast = &regenerate.Declarations{
 				},
 				{
 					Name: "Expr",
-					Nodes: []*regenerate.StructDecl{
+					Structs: []*regenerate.StructDecl{
 						{
 							Name: "GetName",
 							Fields: []*regenerate.FieldDecl{
