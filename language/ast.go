@@ -3,8 +3,8 @@ package language
 /* Generated from regenerate_cacao, do not edit by hand. */
 
 import (
-	"fmt"
 	"github.com/ncbray/compilerutil/writer"
+	"strconv"
 )
 
 type Token struct {
@@ -119,10 +119,10 @@ func dumpToken(node *Token, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	out.WriteString("Pos: ")
-	dumpint(node.Pos, out)
+	out.WriteString(strconv.Itoa(node.Pos))
 	out.EndOfLine()
 	out.WriteString("Text: ")
-	dumpstring(node.Text, out)
+	out.WriteString(strconv.Quote(node.Text))
 	out.EndOfLine()
 	out.Dedent()
 	out.WriteString("}")
@@ -152,7 +152,8 @@ func dumpFile(node *File, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	for i, child := range node.Decls {
-		out.WriteString(fmt.Sprintf("%d: ", i))
+		out.WriteString(strconv.Itoa(i))
+		out.WriteString(": ")
 		dumpFunctionDecl(child, out)
 		out.EndOfLine()
 	}
@@ -202,10 +203,10 @@ func dumpIntegerLiteral(node *IntegerLiteral, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	out.WriteString("Pos: ")
-	dumpint(node.Pos, out)
+	out.WriteString(strconv.Itoa(node.Pos))
 	out.EndOfLine()
 	out.WriteString("Text: ")
-	dumpstring(node.Text, out)
+	out.WriteString(strconv.Quote(node.Text))
 	out.EndOfLine()
 	out.Dedent()
 	out.WriteString("}")
@@ -230,7 +231,7 @@ func dumpInfixExpr(node *InfixExpr, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	out.WriteString("Pos: ")
-	dumpint(node.Pos, out)
+	out.WriteString(strconv.Itoa(node.Pos))
 	out.EndOfLine()
 	out.WriteString("Left: ")
 	dumpExpr(node.Left, out)
@@ -250,7 +251,7 @@ func dumpReturn(node *Return, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	out.WriteString("Pos: ")
-	dumpint(node.Pos, out)
+	out.WriteString(strconv.Itoa(node.Pos))
 	out.EndOfLine()
 	out.WriteString("Expr: ")
 	dumpExpr(node.Expr, out)
@@ -264,7 +265,7 @@ func dumpCall(node *Call, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	out.WriteString("Pos: ")
-	dumpint(node.Pos, out)
+	out.WriteString(strconv.Itoa(node.Pos))
 	out.EndOfLine()
 	out.WriteString("Expr: ")
 	dumpExpr(node.Expr, out)
@@ -273,7 +274,8 @@ func dumpCall(node *Call, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	for i, child := range node.Args {
-		out.WriteString(fmt.Sprintf("%d: ", i))
+		out.WriteString(strconv.Itoa(i))
+		out.WriteString(": ")
 		dumpExpr(child, out)
 		out.EndOfLine()
 	}
@@ -289,7 +291,7 @@ func dumpIf(node *If, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	out.WriteString("Pos: ")
-	dumpint(node.Pos, out)
+	out.WriteString(strconv.Itoa(node.Pos))
 	out.EndOfLine()
 	out.WriteString("Cond: ")
 	dumpExpr(node.Cond, out)
@@ -313,13 +315,14 @@ func dumpBlock(node *Block, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	out.WriteString("Pos: ")
-	dumpint(node.Pos, out)
+	out.WriteString(strconv.Itoa(node.Pos))
 	out.EndOfLine()
 	out.WriteString("Exprs: []Expr {")
 	out.EndOfLine()
 	out.Indent()
 	for i, child := range node.Exprs {
-		out.WriteString(fmt.Sprintf("%d: ", i))
+		out.WriteString(strconv.Itoa(i))
+		out.WriteString(": ")
 		dumpExpr(child, out)
 		out.EndOfLine()
 	}
@@ -343,7 +346,8 @@ func dumpFunctionDecl(node *FunctionDecl, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	for i, child := range node.Params {
-		out.WriteString(fmt.Sprintf("%d: ", i))
+		out.WriteString(strconv.Itoa(i))
+		out.WriteString(": ")
 		dumpParam(child, out)
 		out.EndOfLine()
 	}
@@ -354,7 +358,8 @@ func dumpFunctionDecl(node *FunctionDecl, out *writer.TabbedWriter) {
 	out.EndOfLine()
 	out.Indent()
 	for i, child := range node.Results {
-		out.WriteString(fmt.Sprintf("%d: ", i))
+		out.WriteString(strconv.Itoa(i))
+		out.WriteString(": ")
 		dumpParam(child, out)
 		out.EndOfLine()
 	}

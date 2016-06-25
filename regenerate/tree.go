@@ -66,6 +66,17 @@ func generateGroupDecl(group *GroupDecl, out *writer.TabbedWriter) {
 	}
 }
 
+func dumpChild(expr_value string, expr_type string, out *writer.TabbedWriter) {
+	switch expr_type {
+	case "string":
+		out.WriteLine(fmt.Sprintf("out.WriteString(strconv.Quote(%s))", expr_value))
+	case "int":
+		out.WriteLine(fmt.Sprintf("out.WriteString(strconv.Itoa(%s))", expr_value))
+	default:
+		out.WriteLine(fmt.Sprintf("dump%s(%s, out)", expr_type, expr_value))
+	}
+}
+
 func generateNodeDump(node *StructDecl, out *writer.TabbedWriter) {
 	out.WriteLine(fmt.Sprintf("func dump%s(node *%s, out *writer.TabbedWriter) {", node.Name, node.Name))
 	out.Indent()
@@ -87,8 +98,9 @@ func generateNodeDump(node *StructDecl, out *writer.TabbedWriter) {
 
 			out.WriteLine(fmt.Sprintf("for i, child := range node.%s {", field.Name))
 			out.Indent()
-			out.WriteLine("out.WriteString(fmt.Sprintf(\"%d: \", i))")
-			out.WriteLine(fmt.Sprintf("dump%s(child, out)", field.Type))
+			out.WriteLine("out.WriteString(strconv.Itoa(i))")
+			out.WriteLine("out.WriteString(\": \")")
+			dumpChild("child", field.Type, out)
 			out.WriteLine("out.EndOfLine()")
 			out.Dedent()
 			out.WriteLine("}")
@@ -103,7 +115,7 @@ func generateNodeDump(node *StructDecl, out *writer.TabbedWriter) {
 				out.Indent()
 			}
 			out.WriteLine(fmt.Sprintf("out.WriteString(\"%s: \")", field.Name))
-			out.WriteLine(fmt.Sprintf("dump%s(node.%s, out)", field.Type, field.Name))
+			dumpChild("node."+field.Name, field.Type, out)
 			out.WriteLine("out.EndOfLine()")
 			if field.Ref {
 				out.Dedent()
@@ -155,7 +167,7 @@ func generateDump(decl *TreeDecl, out *writer.TabbedWriter) {
 
 func getTreeImports(decl *TreeDecl, imports map[string]bool) {
 	if decl.Dump {
-		imports["fmt"] = true
+		imports["strconv"] = true
 		imports["github.com/ncbray/compilerutil/writer"] = true
 	}
 }
