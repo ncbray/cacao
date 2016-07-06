@@ -1,20 +1,20 @@
 package main
 
 import (
-	"github.com/ncbray/cacao/regenerate"
+	"github.com/ncbray/cacao/irgen"
 )
 
-var ast = &regenerate.Declarations{
+var ast = &irgen.Declarations{
 	DataSource: "regenerate_cacao",
 	Package:    "github.com/ncbray/cacao/language",
 	File:       "ast.go",
-	Trees: []*regenerate.TreeDecl{
+	Trees: []*irgen.TreeDecl{
 		{
 			Dump: true,
-			Structs: []*regenerate.StructDecl{
+			Structs: []*irgen.StructDecl{
 				{
 					Name: "Token",
-					Fields: []*regenerate.FieldDecl{
+					Fields: []*irgen.FieldDecl{
 						{
 							Name: "Pos",
 							Type: "int",
@@ -27,7 +27,7 @@ var ast = &regenerate.Declarations{
 				},
 				{
 					Name: "Param",
-					Fields: []*regenerate.FieldDecl{
+					Fields: []*irgen.FieldDecl{
 						{
 							Name: "Name",
 							Type: "Token",
@@ -41,7 +41,7 @@ var ast = &regenerate.Declarations{
 				},
 				{
 					Name: "File",
-					Fields: []*regenerate.FieldDecl{
+					Fields: []*irgen.FieldDecl{
 						{
 							Name: "Decls",
 							Type: "FunctionDecl",
@@ -51,13 +51,13 @@ var ast = &regenerate.Declarations{
 					},
 				},
 			},
-			Groups: []*regenerate.GroupDecl{
+			Groups: []*irgen.GroupDecl{
 				{
 					Name: "TypeRef",
-					Structs: []*regenerate.StructDecl{
+					Structs: []*irgen.StructDecl{
 						{
 							Name: "TypeName",
-							Fields: []*regenerate.FieldDecl{
+							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Name",
 									Type: "Token",
@@ -69,10 +69,10 @@ var ast = &regenerate.Declarations{
 				},
 				{
 					Name: "Expr",
-					Structs: []*regenerate.StructDecl{
+					Structs: []*irgen.StructDecl{
 						{
 							Name: "GetName",
-							Fields: []*regenerate.FieldDecl{
+							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Name",
 									Type: "Token",
@@ -82,7 +82,7 @@ var ast = &regenerate.Declarations{
 						},
 						{
 							Name: "IntegerLiteral",
-							Fields: []*regenerate.FieldDecl{
+							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Pos",
 									Type: "int",
@@ -95,7 +95,7 @@ var ast = &regenerate.Declarations{
 						},
 						{
 							Name: "PrefixExpr",
-							Fields: []*regenerate.FieldDecl{
+							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Op",
 									Type: "PrefixOperator",
@@ -108,7 +108,7 @@ var ast = &regenerate.Declarations{
 						},
 						{
 							Name: "InfixExpr",
-							Fields: []*regenerate.FieldDecl{
+							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Pos",
 									Type: "int",
@@ -129,7 +129,7 @@ var ast = &regenerate.Declarations{
 						},
 						{
 							Name: "Return",
-							Fields: []*regenerate.FieldDecl{
+							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Pos",
 									Type: "int",
@@ -142,7 +142,7 @@ var ast = &regenerate.Declarations{
 						},
 						{
 							Name: "Call",
-							Fields: []*regenerate.FieldDecl{
+							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Pos",
 									Type: "int",
@@ -160,7 +160,7 @@ var ast = &regenerate.Declarations{
 						},
 						{
 							Name: "If",
-							Fields: []*regenerate.FieldDecl{
+							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Pos",
 									Type: "int",
@@ -183,7 +183,7 @@ var ast = &regenerate.Declarations{
 						},
 						{
 							Name: "Block",
-							Fields: []*regenerate.FieldDecl{
+							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Pos",
 									Type: "int",
@@ -197,7 +197,7 @@ var ast = &regenerate.Declarations{
 						},
 						{
 							Name: "FunctionDecl",
-							Fields: []*regenerate.FieldDecl{
+							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Name",
 									Type: "Token",
@@ -225,6 +225,162 @@ var ast = &regenerate.Declarations{
 					},
 				},
 			},
+		},
+	},
+}
+
+var struct_ir = &irgen.Declarations{
+	DataSource: "regenerate_cacao",
+	Package:    "github.com/ncbray/cacao/irgen",
+	File:       "structir.go",
+	Trees: []*irgen.TreeDecl{
+		{
+			Dump: true,
+			Structs: []*irgen.StructDecl{
+				{
+					Name: "LLField",
+					Fields: []*irgen.FieldDecl{
+						{
+							Name: "Name",
+							Type: "string",
+						},
+						{
+							Name: "Type",
+							Type: "LLType",
+						},
+						{
+							Name: "Export",
+							Type: "bool",
+						},
+					},
+				},
+				{
+					Name: "LLStruct",
+					Fields: []*irgen.FieldDecl{
+						{
+							Name: "Name",
+							Type: "string",
+						},
+						{
+							Name: "Fields",
+							Type: "LLField",
+							Ref:  true,
+							List: true,
+						},
+						{
+							Name: "Export",
+							Type: "bool",
+						},
+					},
+				},
+			},
+			Groups: []*irgen.GroupDecl{
+				{
+					Name: "LLType",
+					Structs: []*irgen.StructDecl{
+						{
+							Name: "IntrinsicType",
+							Fields: []*irgen.FieldDecl{
+								{
+									Name: "Element",
+									Type: "string",
+								},
+							},
+						},
+						{
+							Name: "StructType",
+							Fields: []*irgen.FieldDecl{
+								{
+									Name: "Element",
+									Type: "LLStruct",
+									Ref:  true,
+								},
+							},
+						},
+						{
+							Name: "PointerType",
+							Fields: []*irgen.FieldDecl{
+								{
+									Name: "Element",
+									Type: "LLType",
+								},
+							},
+						},
+						{
+							Name: "ListType",
+							Fields: []*irgen.FieldDecl{
+								{
+									Name: "Element",
+									Type: "LLType",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+}
+
+var graph = &irgen.Declarations{
+	DataSource: "regenerate_cacao",
+	Package:    "github.com/ncbray/cacao/language",
+	File:       "graph.go",
+	Nodes: []*irgen.NodeDecl{
+		{
+			Name: "Program",
+		},
+		{
+			Name:   "FunctionGraph",
+			Region: "Program",
+		},
+		{
+			Name:   "ControlRegion",
+			Region: "FunctionGraph",
+		},
+		{
+			Name:   "Operation",
+			Region: "FunctionGraph",
+		},
+		{
+			Name:   "Value",
+			Region: "FunctionGraph",
+		},
+	},
+	Parents: []*irgen.ParentRelationshipDecl{
+		{
+			Src:      "FunctionGraph",
+			SrcName:  "ControlRegions",
+			Dst:      "ControlRegion",
+			DstName:  "Function",
+			Required: true,
+		},
+		{
+			Src:      "ControlRegion",
+			SrcName:  "Ops",
+			Dst:      "Operation",
+			DstName:  "Control",
+			Required: true,
+		},
+	},
+	Counted: []*irgen.CountedRelationshipDecl{
+		{
+			Src:     "ControlRegion",
+			SrcName: "Transfers",
+			Dst:     "ControlRegion",
+			DstName: "Merges",
+		},
+		{
+			Src:     "Operation",
+			SrcName: "Inputs",
+			Dst:     "Value",
+			DstName: "Uses",
+		},
+		{
+			Src:     "Operation",
+			SrcName: "Outputs",
+			Dst:     "Value",
+			DstName: "Defs",
 		},
 	},
 }

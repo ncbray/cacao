@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ncbray/cacao/regenerate"
+	"github.com/ncbray/cacao/irgen"
 	"github.com/ncbray/compilerutil/fs"
 	"github.com/ncbray/compilerutil/goutil"
 )
@@ -87,7 +87,7 @@ func getBoolType(intrinsic_types []*IntrinsicTypeInfo) *IntrinsicTypeInfo {
 	return nil
 }
 
-func Synthesize(data_dir string, decls []*regenerate.Declarations, fsys fs.FileSystem) []*regenerate.Declarations {
+func Synthesize(data_dir string, decls []*irgen.Declarations, fsys fs.FileSystem) []*irgen.Declarations {
 	fsys = fs.MakeRelative(fsys, data_dir)
 	intrinsic_types := getIntrinsicTypes(fsys)
 	prefix_operators := getPrefixOperators(fsys)
@@ -115,11 +115,11 @@ func Synthesize(data_dir string, decls []*regenerate.Declarations, fsys fs.FileS
 		}
 	}
 
-	instances := make([]*regenerate.EnumInstance, len(intrinsic_types))
+	instances := make([]*irgen.EnumInstance, len(intrinsic_types))
 	for i, intrinsic_type := range intrinsic_types {
-		instances[i] = &regenerate.EnumInstance{
+		instances[i] = &irgen.EnumInstance{
 			Name: intrinsic_type.Name,
-			Fields: []*regenerate.EnumInstanceField{
+			Fields: []*irgen.EnumInstanceField{
 				{
 					Name:  "Text",
 					Value: intrinsic_type.Text,
@@ -140,15 +140,15 @@ func Synthesize(data_dir string, decls []*regenerate.Declarations, fsys fs.FileS
 		}
 	}
 
-	decls = append(decls, &regenerate.Declarations{
-		DataSource: "regenerate_cacao",
+	decls = append(decls, &irgen.Declarations{
+		DataSource: "irgen_cacao",
 		Package:    "github.com/ncbray/cacao/language",
 		File:       "intrinsictype.go",
-		Enums: []*regenerate.EnumDecl{
-			&regenerate.EnumDecl{
+		Enums: []*irgen.EnumDecl{
+			&irgen.EnumDecl{
 				Name:   "IntrinsicType",
 				Prefix: "INTRINSIC_TYPE",
-				Fields: []*regenerate.EnumDeclField{
+				Fields: []*irgen.EnumDeclField{
 					{
 						Name: "Text",
 						Type: "string",
@@ -171,11 +171,11 @@ func Synthesize(data_dir string, decls []*regenerate.Declarations, fsys fs.FileS
 		},
 	})
 
-	instances = make([]*regenerate.EnumInstance, len(infix_operators))
+	instances = make([]*irgen.EnumInstance, len(infix_operators))
 	for i, infix_op := range infix_operators {
-		instances[i] = &regenerate.EnumInstance{
+		instances[i] = &irgen.EnumInstance{
 			Name: infix_op.Name,
-			Fields: []*regenerate.EnumInstanceField{
+			Fields: []*irgen.EnumInstanceField{
 				{
 					Name:  "Text",
 					Value: infix_op.Text,
@@ -188,16 +188,16 @@ func Synthesize(data_dir string, decls []*regenerate.Declarations, fsys fs.FileS
 		}
 	}
 
-	decls = append(decls, &regenerate.Declarations{
+	decls = append(decls, &irgen.Declarations{
 		DataSource: "regenerate_cacao",
 		Package:    "github.com/ncbray/cacao/language",
 		File:       "infixoperator.go",
-		Enums: []*regenerate.EnumDecl{
-			&regenerate.EnumDecl{
+		Enums: []*irgen.EnumDecl{
+			&irgen.EnumDecl{
 				Name:           "InfixOperator",
 				Prefix:         "INFIX_OPERATOR",
 				GenerateParser: "Text",
-				Fields: []*regenerate.EnumDeclField{
+				Fields: []*irgen.EnumDeclField{
 					{
 						Name: "Text",
 						Type: "string",
@@ -212,7 +212,7 @@ func Synthesize(data_dir string, decls []*regenerate.Declarations, fsys fs.FileS
 		},
 	})
 
-	instances = []*regenerate.EnumInstance{}
+	instances = []*irgen.EnumInstance{}
 
 	// Generate intrinsic infix ops.
 	for _, intrinsic_type := range intrinsic_types {
@@ -234,9 +234,9 @@ func Synthesize(data_dir string, decls []*regenerate.Declarations, fsys fs.FileS
 			if infix_op.Equality || infix_op.Compare || infix_op.Shortcircut {
 				result = bool_type
 			}
-			instances = append(instances, &regenerate.EnumInstance{
+			instances = append(instances, &irgen.EnumInstance{
 				Name: intrinsic_type.Name + "_" + infix_op.Name,
-				Fields: []*regenerate.EnumInstanceField{
+				Fields: []*irgen.EnumInstanceField{
 					{
 						Name:  "InfixOperator",
 						Value: "INFIX_OPERATOR_" + infix_op.Name,
@@ -258,16 +258,16 @@ func Synthesize(data_dir string, decls []*regenerate.Declarations, fsys fs.FileS
 		}
 	}
 
-	decls = append(decls, &regenerate.Declarations{
+	decls = append(decls, &irgen.Declarations{
 		DataSource: "regenerate_cacao",
 		Package:    "github.com/ncbray/cacao/language",
 		File:       "intrinsicoperation.go",
 
-		Enums: []*regenerate.EnumDecl{
-			&regenerate.EnumDecl{
+		Enums: []*irgen.EnumDecl{
+			&irgen.EnumDecl{
 				Name:   "IntrinsicOperation",
 				Prefix: "INTRINSIC_OPERATION",
-				Fields: []*regenerate.EnumDeclField{
+				Fields: []*irgen.EnumDeclField{
 					{
 						Name: "InfixOperator",
 						Type: "InfixOperator",
@@ -285,7 +285,7 @@ func Synthesize(data_dir string, decls []*regenerate.Declarations, fsys fs.FileS
 						Type: "IntrinsicType",
 					},
 				},
-				Indexes: []*regenerate.EnumIndex{
+				Indexes: []*irgen.EnumIndex{
 					{
 						Name: "InfixToIntrinsic",
 						Path: []string{

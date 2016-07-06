@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ncbray/cacao/regenerate"
+	"github.com/ncbray/cacao/irgen"
 	"github.com/ncbray/compilerutil/fs"
 	"os"
 	"path/filepath"
@@ -43,9 +43,9 @@ func main() {
 	fsys := fs.MakeBufferedFileSystem(tdir)
 
 	data_dir := filepath.Join(gopath, "src/github.com/ncbray/cacao/data")
-	decls := Synthesize(data_dir, []*regenerate.Declarations{ast}, fsys)
+	decls := Synthesize(data_dir, []*irgen.Declarations{ast, struct_ir, graph}, fsys)
 
 	output_dir := filepath.Join(gopath, "src")
-	regenerate.ProcessDeclarations(decls, output_dir, fsys)
+	irgen.ProcessDeclarations(decls, output_dir, fsys)
 	fsys.Commit()
 }

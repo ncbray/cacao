@@ -1,6 +1,6 @@
 package language
 
-/* Generated from regenerate_cacao, do not edit by hand. */
+/* Generated from irgen_cacao, do not edit by hand. */
 
 type IntrinsicType uint8
 

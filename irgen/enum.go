@@ -1,4 +1,4 @@
-package regenerate
+package irgen
 
 import (
 	"fmt"

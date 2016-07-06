@@ -1,4 +1,4 @@
-package regenerate
+package irgen
 
 import (
 	"fmt"
@@ -69,6 +69,9 @@ type Declarations struct {
 	File       string
 	Enums      []*EnumDecl
 	Trees      []*TreeDecl
+	Nodes      []*NodeDecl
+	Parents    []*ParentRelationshipDecl
+	Counted    []*CountedRelationshipDecl
 }
 
 func processDeclaration(decl *Declarations, output_dir string, fsys fs.FileSystem) {
@@ -97,6 +100,9 @@ func processDeclaration(decl *Declarations, output_dir string, fsys fs.FileSyste
 	for _, t := range decl.Trees {
 		getTreeImports(t, imports)
 	}
+	if len(decl.Nodes) > 0 {
+		getNodeImports(decl.Nodes, imports)
+	}
 
 	if len(imports) > 0 {
 		importList := make([]string, len(imports))
@@ -117,8 +123,15 @@ func processDeclaration(decl *Declarations, output_dir string, fsys fs.FileSyste
 		out.EndOfLine()
 		generateTree(t, out)
 	}
+	if len(decl.Nodes) > 0 {
+		generateGraph(decl.Nodes, decl.Parents, decl.Counted, out)
+	}
+
 	tw.Close()
-	formatGoFile(t, fsys.OutputFile(outfile, 0640))
+	err = formatGoFile(t, fsys.OutputFile(outfile, 0640))
+	if err != nil {
+		panic(err)
+	}
 }
 
 func ProcessDeclarations(decls []*Declarations, output_dir string, fsys fs.FileSystem) {

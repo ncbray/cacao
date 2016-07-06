@@ -1,4 +1,4 @@
-package regenerate
+package irgen
 
 import (
 	"fmt"
@@ -72,6 +72,8 @@ func dumpChild(expr_value string, expr_type string, out *writer.TabbedWriter) {
 		out.WriteLine(fmt.Sprintf("out.WriteString(strconv.Quote(%s))", expr_value))
 	case "int":
 		out.WriteLine(fmt.Sprintf("out.WriteString(strconv.Itoa(%s))", expr_value))
+	case "bool":
+		out.WriteLine(fmt.Sprintf("out.WriteString(strconv.FormatBool(%s))", expr_value))
 	default:
 		out.WriteLine(fmt.Sprintf("dump%s(%s, out)", expr_type, expr_value))
 	}
