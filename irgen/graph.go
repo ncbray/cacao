@@ -8,7 +8,11 @@ import (
 
 var graphCodegenTemplates = template.Must(template.New("main").Parse(`
 {{define "parent_relationship" -}}
-func (src *{{.Src.Impl.Name}}) appendTo{{.SrcName}}(dst *{{.Dst.Impl.Name}}) {
+{{- if len .Src.Allocated}}
+func (src *{{.Src.Impl.Name}}) appendTo{{.Src.Impl.Name}}{{.SrcName}}(dst *{{.Dst.Impl.Name}}) {
+{{- else}}
+func (region *{{.Src.Region.Impl.Name}}) appendTo{{.Src.Impl.Name}}{{.SrcName}}(src *{{.Src.Impl.Name}}, dst *{{.Dst.Impl.Name}}) {
+{{- end}}
 	if dst.{{.PrevField.Name}} != nil || dst.{{.NextField.Name}} != nil {
 		panic(dst)
 	}
@@ -40,11 +44,17 @@ func (iter *{{.Iterator.Name}}) GetNext() *{{.Dst.Impl.Name}} {
 
 {{define "counted_relationship" -}}
 func (src *{{.Src.Impl.Name}}) Create{{.SrcName}}(count int) {{.Creator.Name}} {
+	if src.{{.CountedField.Name}} != nil {
+		panic(src)
+	}
 	src.{{.CountedField.Name}} = make([]*{{.Dst.Impl.Name}}, count)
 	return {{.Creator.Name}}{src: src}
 }
 
 func (iter *{{.Creator.Name}}) SetNext(dst *{{.Dst.Impl.Name}}) {
+	if iter.index >= len(iter.src.{{.CountedField.Name}}) {
+		panic(iter.src)
+	}
 	iter.src.{{.CountedField.Name}}[iter.index] = dst
 	iter.index++
 }
@@ -58,6 +68,9 @@ func (iter *{{.Iterator.Name}}) HasNext() bool {
 }
 
 func (iter *{{.Iterator.Name}}) GetNext() *{{.Dst.Impl.Name}} {
+	if !iter.HasNext() {
+		panic(iter.src)
+	}
 	temp := iter.src.{{.CountedField.Name}}[iter.index]
 	iter.index++
 	return temp
@@ -191,7 +204,9 @@ func generateConstructor(info *NodeInfo, out *writer.TabbedWriter) {
 		switch rel := rel.(type) {
 		case *ParentRelationshipInfo:
 			if rel.Required {
-				args = append(args, toLocalVarName(rel.DstName)+" *"+rel.Src.Impl.Name)
+				if rel.Src != info.Region {
+					args = append(args, toLocalVarName(rel.DstName)+" *"+rel.Src.Impl.Name)
+				}
 			}
 		}
 	}
@@ -209,10 +224,15 @@ func generateConstructor(info *NodeInfo, out *writer.TabbedWriter) {
 		switch rel := rel.(type) {
 		case *ParentRelationshipInfo:
 			if rel.Required {
-				out.WriteString(toLocalVarName(rel.DstName))
-				out.WriteString(".appendTo")
+				out.WriteString("region.appendTo")
+				out.WriteString(rel.Src.Impl.Name)
 				out.WriteString(rel.SrcName)
-				out.WriteString("(o)")
+				out.WriteString("(")
+				if rel.Src != info.Region {
+					out.WriteString(toLocalVarName(rel.DstName))
+					out.WriteString(", ")
+				}
+				out.WriteString("o)")
 				out.EndOfLine()
 			}
 		}

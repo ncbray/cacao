@@ -24,7 +24,7 @@ type functionGraphControlRegionsIterator struct {
 	current *ControlRegion
 }
 
-func (src *FunctionGraph) appendToControlRegions(dst *ControlRegion) {
+func (src *FunctionGraph) appendToFunctionGraphControlRegions(dst *ControlRegion) {
 	if dst.controlRegionsPrev != nil || dst.controlRegionsNext != nil {
 		panic(dst)
 	}
@@ -61,9 +61,9 @@ type ControlRegion struct {
 	transfers          []*ControlRegion
 }
 
-func (region *FunctionGraph) CreateControlRegion(function *FunctionGraph) *ControlRegion {
+func (region *FunctionGraph) CreateControlRegion() *ControlRegion {
 	o := &ControlRegion{}
-	function.appendToControlRegions(o)
+	region.appendToFunctionGraphControlRegions(o)
 	return o
 }
 
@@ -71,7 +71,7 @@ type controlRegionOpsIterator struct {
 	current *Operation
 }
 
-func (src *ControlRegion) appendToOps(dst *Operation) {
+func (region *FunctionGraph) appendToControlRegionOps(src *ControlRegion, dst *Operation) {
 	if dst.opsPrev != nil || dst.opsNext != nil {
 		panic(dst)
 	}
@@ -111,11 +111,17 @@ type controlRegionTransfersIterator struct {
 }
 
 func (src *ControlRegion) CreateTransfers(count int) controlRegionTransfersCreator {
+	if src.transfers != nil {
+		panic(src)
+	}
 	src.transfers = make([]*ControlRegion, count)
 	return controlRegionTransfersCreator{src: src}
 }
 
 func (iter *controlRegionTransfersCreator) SetNext(dst *ControlRegion) {
+	if iter.index >= len(iter.src.transfers) {
+		panic(iter.src)
+	}
 	iter.src.transfers[iter.index] = dst
 	iter.index++
 }
@@ -129,6 +135,9 @@ func (iter *controlRegionTransfersIterator) HasNext() bool {
 }
 
 func (iter *controlRegionTransfersIterator) GetNext() *ControlRegion {
+	if !iter.HasNext() {
+		panic(iter.src)
+	}
 	temp := iter.src.transfers[iter.index]
 	iter.index++
 	return temp
@@ -143,7 +152,7 @@ type Operation struct {
 
 func (region *FunctionGraph) CreateOperation(control *ControlRegion) *Operation {
 	o := &Operation{}
-	control.appendToOps(o)
+	region.appendToControlRegionOps(control, o)
 	return o
 }
 
@@ -158,11 +167,17 @@ type operationInputsIterator struct {
 }
 
 func (src *Operation) CreateInputs(count int) operationInputsCreator {
+	if src.inputs != nil {
+		panic(src)
+	}
 	src.inputs = make([]*Value, count)
 	return operationInputsCreator{src: src}
 }
 
 func (iter *operationInputsCreator) SetNext(dst *Value) {
+	if iter.index >= len(iter.src.inputs) {
+		panic(iter.src)
+	}
 	iter.src.inputs[iter.index] = dst
 	iter.index++
 }
@@ -176,6 +191,9 @@ func (iter *operationInputsIterator) HasNext() bool {
 }
 
 func (iter *operationInputsIterator) GetNext() *Value {
+	if !iter.HasNext() {
+		panic(iter.src)
+	}
 	temp := iter.src.inputs[iter.index]
 	iter.index++
 	return temp
@@ -192,11 +210,17 @@ type operationOutputsIterator struct {
 }
 
 func (src *Operation) CreateOutputs(count int) operationOutputsCreator {
+	if src.outputs != nil {
+		panic(src)
+	}
 	src.outputs = make([]*Value, count)
 	return operationOutputsCreator{src: src}
 }
 
 func (iter *operationOutputsCreator) SetNext(dst *Value) {
+	if iter.index >= len(iter.src.outputs) {
+		panic(iter.src)
+	}
 	iter.src.outputs[iter.index] = dst
 	iter.index++
 }
@@ -210,6 +234,9 @@ func (iter *operationOutputsIterator) HasNext() bool {
 }
 
 func (iter *operationOutputsIterator) GetNext() *Value {
+	if !iter.HasNext() {
+		panic(iter.src)
+	}
 	temp := iter.src.outputs[iter.index]
 	iter.index++
 	return temp
