@@ -27,7 +27,7 @@ func (region *{{.Src.Region.Impl.Name}}) appendTo{{.Src.Impl.Name}}{{.SrcName}}(
 	}
 }
 
-func (src *{{.Src.Impl.Name}}) Iter{{.SrcName}}() {{.Iterator.Name}} {
+func (region *{{.Src.Region.Impl.Name}}) Iter{{.Src.Impl.Name}}{{.SrcName}}(src *{{.Src.Impl.Name}}) {{.Iterator.Name}} {
 	return {{.Iterator.Name}}{current: src.{{.HeadField.Name}}}
 }
 
@@ -43,7 +43,7 @@ func (iter *{{.Iterator.Name}}) GetNext() *{{.Dst.Impl.Name}} {
 {{end}}
 
 {{define "counted_relationship" -}}
-func (src *{{.Src.Impl.Name}}) Create{{.SrcName}}(count int) {{.Creator.Name}} {
+func (region *{{.Src.Region.Impl.Name}}) Create{{.Src.Impl.Name}}{{.SrcName}}(src *{{.Src.Impl.Name}}, count int) {{.Creator.Name}} {
 	if src.{{.CountedField.Name}} != nil {
 		panic(src)
 	}
@@ -59,7 +59,7 @@ func (iter *{{.Creator.Name}}) SetNext(dst *{{.Dst.Impl.Name}}) {
 	iter.index++
 }
 
-func (src *{{.Src.Impl.Name}}) Iter{{.SrcName}}() {{.Iterator.Name}} {
+func (region *{{.Src.Region.Impl.Name}}) Iter{{.Src.Impl.Name}}{{.SrcName}}(src *{{.Src.Impl.Name}}) {{.Iterator.Name}} {
 	return {{.Iterator.Name}}{src: src}
 }
 
@@ -349,11 +349,19 @@ func generateGraph(decls []*NodeDecl, parent_relationship_decls []*ParentRelatio
 			switch rel := rel.(type) {
 			case *ParentRelationshipInfo:
 				file_decls = append(file_decls, rel.Iterator)
-				file_decls = append(file_decls, &templateGenerator{tmpl: graphCodegenTemplates, name: "parent_relationship", data: rel})
+				file_decls = append(file_decls, &templateGenerator{
+					tmpl: graphCodegenTemplates,
+					name: "parent_relationship",
+					data: rel,
+				})
 			case *CountedRelationshipInfo:
 				file_decls = append(file_decls, rel.Creator)
 				file_decls = append(file_decls, rel.Iterator)
-				file_decls = append(file_decls, &templateGenerator{tmpl: graphCodegenTemplates, name: "counted_relationship", data: rel})
+				file_decls = append(file_decls, &templateGenerator{
+					tmpl: graphCodegenTemplates,
+					name: "counted_relationship",
+					data: rel,
+				})
 			default:
 				panic(rel)
 			}

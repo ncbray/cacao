@@ -39,7 +39,7 @@ func (src *FunctionGraph) appendToFunctionGraphControlRegions(dst *ControlRegion
 	}
 }
 
-func (src *FunctionGraph) IterControlRegions() functionGraphControlRegionsIterator {
+func (region *Program) IterFunctionGraphControlRegions(src *FunctionGraph) functionGraphControlRegionsIterator {
 	return functionGraphControlRegionsIterator{current: src.controlRegionsHead}
 }
 
@@ -86,7 +86,7 @@ func (region *FunctionGraph) appendToControlRegionOps(src *ControlRegion, dst *O
 	}
 }
 
-func (src *ControlRegion) IterOps() controlRegionOpsIterator {
+func (region *FunctionGraph) IterControlRegionOps(src *ControlRegion) controlRegionOpsIterator {
 	return controlRegionOpsIterator{current: src.opsHead}
 }
 
@@ -110,7 +110,7 @@ type controlRegionTransfersIterator struct {
 	index int
 }
 
-func (src *ControlRegion) CreateTransfers(count int) controlRegionTransfersCreator {
+func (region *FunctionGraph) CreateControlRegionTransfers(src *ControlRegion, count int) controlRegionTransfersCreator {
 	if src.transfers != nil {
 		panic(src)
 	}
@@ -126,7 +126,7 @@ func (iter *controlRegionTransfersCreator) SetNext(dst *ControlRegion) {
 	iter.index++
 }
 
-func (src *ControlRegion) IterTransfers() controlRegionTransfersIterator {
+func (region *FunctionGraph) IterControlRegionTransfers(src *ControlRegion) controlRegionTransfersIterator {
 	return controlRegionTransfersIterator{src: src}
 }
 
@@ -166,7 +166,7 @@ type operationInputsIterator struct {
 	index int
 }
 
-func (src *Operation) CreateInputs(count int) operationInputsCreator {
+func (region *FunctionGraph) CreateOperationInputs(src *Operation, count int) operationInputsCreator {
 	if src.inputs != nil {
 		panic(src)
 	}
@@ -182,7 +182,7 @@ func (iter *operationInputsCreator) SetNext(dst *Value) {
 	iter.index++
 }
 
-func (src *Operation) IterInputs() operationInputsIterator {
+func (region *FunctionGraph) IterOperationInputs(src *Operation) operationInputsIterator {
 	return operationInputsIterator{src: src}
 }
 
@@ -209,7 +209,7 @@ type operationOutputsIterator struct {
 	index int
 }
 
-func (src *Operation) CreateOutputs(count int) operationOutputsCreator {
+func (region *FunctionGraph) CreateOperationOutputs(src *Operation, count int) operationOutputsCreator {
 	if src.outputs != nil {
 		panic(src)
 	}
@@ -225,7 +225,7 @@ func (iter *operationOutputsCreator) SetNext(dst *Value) {
 	iter.index++
 }
 
-func (src *Operation) IterOutputs() operationOutputsIterator {
+func (region *FunctionGraph) IterOperationOutputs(src *Operation) operationOutputsIterator {
 	return operationOutputsIterator{src: src}
 }
 
