@@ -10,6 +10,7 @@ type FieldDecl struct {
 	Type string
 	Ref  bool
 	List bool
+	Weak bool
 }
 
 type StructDecl struct {
@@ -86,6 +87,9 @@ func generateNodeDump(node *StructDecl, out *writer.TabbedWriter) {
 	out.WriteLine("out.EndOfLine()")
 	out.WriteLine("out.Indent()")
 	for _, field := range node.Fields {
+		if field.Weak {
+			continue
+		}
 		if field.List {
 			out.WriteString(fmt.Sprintf("out.WriteString(\"%s: []", field.Name))
 			if field.Ref {

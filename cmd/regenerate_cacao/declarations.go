@@ -254,32 +254,13 @@ var struct_ir = &irgen.Declarations{
 						},
 					},
 				},
-				{
-					Name: "LLStruct",
-					Fields: []*irgen.FieldDecl{
-						{
-							Name: "Name",
-							Type: "string",
-						},
-						{
-							Name: "Fields",
-							Type: "LLField",
-							Ref:  true,
-							List: true,
-						},
-						{
-							Name: "Export",
-							Type: "bool",
-						},
-					},
-				},
 			},
 			Groups: []*irgen.GroupDecl{
 				{
 					Name: "LLType",
 					Structs: []*irgen.StructDecl{
 						{
-							Name: "IntrinsicType",
+							Name: "LLIntrinsicType",
 							Fields: []*irgen.FieldDecl{
 								{
 									Name: "Element",
@@ -288,12 +269,33 @@ var struct_ir = &irgen.Declarations{
 							},
 						},
 						{
-							Name: "StructType",
+							Name: "LLStruct",
 							Fields: []*irgen.FieldDecl{
 								{
-									Name: "Element",
-									Type: "LLStruct",
+									Name: "Name",
+									Type: "string",
+								},
+								{
+									Name: "Fields",
+									Type: "LLField",
 									Ref:  true,
+									List: true,
+								},
+								{
+									Name: "Export",
+									Type: "bool",
+								},
+								{
+									Name: "PtrCache",
+									Type: "PointerType",
+									Ref:  true,
+									Weak: true,
+								},
+								{
+									Name: "ListCache",
+									Type: "ListType",
+									Ref:  true,
+									Weak: true,
 								},
 							},
 						},

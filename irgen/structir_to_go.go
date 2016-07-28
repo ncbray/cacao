@@ -14,10 +14,10 @@ func generateType(t LLType, out *writer.TabbedWriter) {
 		case *ListType:
 			out.WriteString("[]")
 			t = st.Element
-		case *StructType:
-			out.WriteString(st.Element.Name)
+		case *LLStruct:
+			out.WriteString(st.Name)
 			return
-		case *IntrinsicType:
+		case *LLIntrinsicType:
 			out.WriteString(st.Element)
 			return
 		default:

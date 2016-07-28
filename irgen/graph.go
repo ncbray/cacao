@@ -165,11 +165,10 @@ func generateCommaList(args []string, out *writer.TabbedWriter) {
 }
 
 func ptrToStruct(s *LLStruct) LLType {
-	return &PointerType{
-		Element: &StructType{
-			Element: s,
-		},
+	if s.PtrCache == nil {
+		s.PtrCache = &PointerType{Element: s}
 	}
+	return s.PtrCache
 }
 
 func createField(s *LLStruct, name string, t LLType) *LLField {
@@ -325,11 +324,11 @@ func generateGraph(decls []*NodeDecl, parent_relationship_decls []*ParentRelatio
 
 		rel.Creator = prog.CreateLLStruct(si.Impl.Name+decl.SrcName+"Creator", false)
 		createField(rel.Creator, "Src", ptrToStruct(si.Impl))
-		createField(rel.Creator, "Index", &IntrinsicType{Element: "int"})
+		createField(rel.Creator, "Index", &LLIntrinsicType{Element: "int"})
 
 		rel.Iterator = prog.CreateLLStruct(si.Impl.Name+decl.SrcName+"Iterator", false)
 		createField(rel.Iterator, "Src", ptrToStruct(si.Impl))
-		createField(rel.Iterator, "Index", &IntrinsicType{Element: "int"})
+		createField(rel.Iterator, "Index", &LLIntrinsicType{Element: "int"})
 	}
 
 	// Fix up names to match Go's symbol exporting scheme.

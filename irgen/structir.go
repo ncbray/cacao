@@ -13,28 +13,26 @@ type LLField struct {
 	Export bool
 }
 
-type LLStruct struct {
-	Name   string
-	Fields []*LLField
-	Export bool
-}
-
 type LLType interface {
 	isLLType()
 }
 
-type IntrinsicType struct {
+type LLIntrinsicType struct {
 	Element string
 }
 
-func (node *IntrinsicType) isLLType() {
+func (node *LLIntrinsicType) isLLType() {
 }
 
-type StructType struct {
-	Element *LLStruct
+type LLStruct struct {
+	Name      string
+	Fields    []*LLField
+	Export    bool
+	PtrCache  *PointerType
+	ListCache *ListType
 }
 
-func (node *StructType) isLLType() {
+func (node *LLStruct) isLLType() {
 }
 
 type PointerType struct {
@@ -68,6 +66,17 @@ func dumpLLField(node *LLField, out *writer.TabbedWriter) {
 	out.WriteString("}")
 }
 
+func dumpLLIntrinsicType(node *LLIntrinsicType, out *writer.TabbedWriter) {
+	out.WriteString("LLIntrinsicType {")
+	out.EndOfLine()
+	out.Indent()
+	out.WriteString("Element: ")
+	out.WriteString(strconv.Quote(node.Element))
+	out.EndOfLine()
+	out.Dedent()
+	out.WriteString("}")
+}
+
 func dumpLLStruct(node *LLStruct, out *writer.TabbedWriter) {
 	out.WriteString("LLStruct {")
 	out.EndOfLine()
@@ -90,30 +99,6 @@ func dumpLLStruct(node *LLStruct, out *writer.TabbedWriter) {
 	out.WriteString("Export: ")
 	out.WriteString(strconv.FormatBool(node.Export))
 	out.EndOfLine()
-	out.Dedent()
-	out.WriteString("}")
-}
-
-func dumpIntrinsicType(node *IntrinsicType, out *writer.TabbedWriter) {
-	out.WriteString("IntrinsicType {")
-	out.EndOfLine()
-	out.Indent()
-	out.WriteString("Element: ")
-	out.WriteString(strconv.Quote(node.Element))
-	out.EndOfLine()
-	out.Dedent()
-	out.WriteString("}")
-}
-
-func dumpStructType(node *StructType, out *writer.TabbedWriter) {
-	out.WriteString("StructType {")
-	out.EndOfLine()
-	out.Indent()
-	if node.Element != nil {
-		out.WriteString("Element: ")
-		dumpLLStruct(node.Element, out)
-		out.EndOfLine()
-	}
 	out.Dedent()
 	out.WriteString("}")
 }
@@ -142,10 +127,10 @@ func dumpListType(node *ListType, out *writer.TabbedWriter) {
 
 func dumpLLType(node LLType, out *writer.TabbedWriter) {
 	switch node := node.(type) {
-	case *IntrinsicType:
-		dumpIntrinsicType(node, out)
-	case *StructType:
-		dumpStructType(node, out)
+	case *LLIntrinsicType:
+		dumpLLIntrinsicType(node, out)
+	case *LLStruct:
+		dumpLLStruct(node, out)
 	case *PointerType:
 		dumpPointerType(node, out)
 	case *ListType:
