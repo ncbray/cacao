@@ -1,5 +1,7 @@
 package language
 
+//go:generate regenerate_cacao
+
 import (
 	"fmt"
 	"github.com/ncbray/cacao/framework"

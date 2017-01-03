@@ -81,7 +81,7 @@ func processDeclaration(decl *Declarations, output_dir string, fsys fs.FileSyste
 	}
 
 	outfile := filepath.Join(package_dir, decl.File)
-	fmt.Println("generating:", outfile)
+	//fmt.Println("generating:", filepath.Join(decl.Package, decl.File))
 
 	t := fsys.TempFile()
 	tw, err := t.GetWriter()
